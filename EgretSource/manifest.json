@@ -1,0 +1,35 @@
+{
+	"initial": [
+		"libs/modules/egret/egret.js",
+		"libs/modules/egret/egret.web.js",
+		"libs/modules/game/game.js",
+		"libs/modules/tween/tween.js",
+		"libs/modules/res/res.js",
+		"libs/modules/eui/eui.js",
+		"libs/modules/socket/socket.js",
+		"promise/bin/promise.js"
+	],
+	"game": [
+		"bin-debug/view/VerticalLayout.js",
+		"bin-debug/scene/AboutScene.js",
+		"bin-debug/Main.js",
+		"bin-debug/Utils.js",
+		"bin-debug/model/game/InitData.js",
+		"bin-debug/model/general/ArmsInfo.js",
+		"bin-debug/model/general/General.js",
+		"bin-debug/model/general/GeneralTable.js",
+		"bin-debug/model/skill/Skill.js",
+		"bin-debug/model/skill/SkillTable.js",
+		"bin-debug/GameSocket.js",
+		"bin-debug/scene/GameScene.js",
+		"bin-debug/scene/LoadingScene.js",
+		"bin-debug/scene/StartScene.js",
+		"bin-debug/view/Chess.js",
+		"bin-debug/view/ChessBoard.js",
+		"bin-debug/view/HorizontalLayout.js",
+		"bin-debug/view/HurtedChess.js",
+		"bin-debug/view/HurtedChessBoard.js",
+		"bin-debug/view/ImgBtn.js",
+		"bin-debug/LoadingUI.js"
+	]
+}

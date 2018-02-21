@@ -1,0 +1,15 @@
+# Windows:
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Python:
+*.py[cod]
+*.so
+*.egg
+*.egg-info
+
+# My configurations:
+/EgretSource/bin-debug
+/EgretSource/bin-release
+/BuildServer/.idea
