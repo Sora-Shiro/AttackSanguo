@@ -1555,18 +1555,19 @@ ${g.skill.text}`;
           g.extraZm = 0;
           g.extraMoveStep = 0;
           g.extraAtkRange = 0;
+          g.hasMoved = false;
           g.canPenetrate = false;
           g.extraMessage = {};
+          let untilDieMessage = g.untilDieMessage;
+          if (untilDieMessage["天弓"]) {
+            g.extraYl += 4 * untilDieMessage["天弓"]["times"];
+          }
+          if (untilDieMessage["弓腰之乐"]) {
+            this.changeExtraToGenerals(chess.camp, "弓", 2 * untilDieMessage["弓腰之乐"]["times"],
+              0, 0, 0, {});
+          }
+          chess.general = g;
         }
-        let untilDieMessage = g.untilDieMessage;
-        if (untilDieMessage["天弓"]) {
-          g.extraYl += 4 * untilDieMessage["天弓"]["times"];
-        }
-        if (untilDieMessage["弓腰之乐"]) {
-          this.changeExtraToGenerals(chess.camp, "弓", 2 * untilDieMessage["弓腰之乐"]["times"],
-            0, 0, 0, {});
-        }
-        chess.general = g;
       }
     }
   }

@@ -296,7 +296,8 @@ class StartScene extends egret.Sprite {
   private onBtnConnectTap() {
     this.disableAllTouchable();
     this.appendLog("连接服务器中");
-    let url = `127.168.0.1`;
+    // let url = `127.168.0.1`;
+    let url = `23.83.226.192`;
     if (this.socket && this.socket.connected) {
       this.socket.close();
     }

@@ -19,7 +19,7 @@ class ArmsInfo {
       case "骑":
         result = {
           moveStep: 3,
-          ifStraight: true,
+          ifStraight: false,
           attackRange: 1,
           maxTl: 20 + yl * 2,
         };
