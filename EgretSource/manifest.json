@@ -10,25 +10,27 @@
 		"promise/bin/promise.js"
 	],
 	"game": [
+		"bin-debug/model/general/General.js",
 		"bin-debug/view/VerticalLayout.js",
-		"bin-debug/GameSocket.js",
-		"bin-debug/Main.js",
+		"bin-debug/scene/LoadingScene.js",
 		"bin-debug/Utils.js",
 		"bin-debug/model/game/InitData.js",
 		"bin-debug/model/general/ArmsInfo.js",
-		"bin-debug/model/general/General.js",
+		"bin-debug/GameSocket.js",
 		"bin-debug/model/general/GeneralTable.js",
 		"bin-debug/model/skill/SkillTable.js",
 		"bin-debug/scene/AboutScene.js",
+		"bin-debug/scene/GameScene.js",
 		"bin-debug/LoadingUI.js",
-		"bin-debug/scene/LoadingScene.js",
 		"bin-debug/scene/StartScene.js",
 		"bin-debug/view/Chess.js",
 		"bin-debug/view/ChessBoard.js",
+		"bin-debug/view/GeneralSingleLayout.js",
 		"bin-debug/view/HorizontalLayout.js",
 		"bin-debug/view/HurtedChess.js",
 		"bin-debug/view/HurtedChessBoard.js",
 		"bin-debug/view/ImgBtn.js",
-		"bin-debug/scene/GameScene.js"
+		"bin-debug/Main.js",
+		"bin-debug/view/handler/ChosenEventHandler.js"
 	]
 }

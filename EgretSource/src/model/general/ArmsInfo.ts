@@ -29,7 +29,7 @@ class ArmsInfo {
           moveStep: 2,
           ifStraight: false,
           attackRange: 2,
-          maxTl: 17 + yl * 2,
+          maxTl: 15 + yl * 2,
         };
         break;
       case "器":

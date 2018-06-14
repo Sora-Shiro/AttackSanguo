@@ -270,23 +270,20 @@ class GameScene extends egret.Sprite {
         `武将数据
 坐标：(${i + 1}, ${j + 1})
 勇略: ${g.yl}  智谋：${g.zm}  体力：${g.tl}
-技能：${g.skill.name}
-${g.skill.text}`;
+技能：${g.skill.name} - ${g.skill.text}`;
     } else if (type === "hurted") {
       if (j === 0) {
         detailText =
           `武将数据
 坐标：伤兵区第 ${4 - i} 位
 勇略: ${g.yl}  智谋：${g.zm}  体力：${g.tl}
-技能：${g.skill.name}
-${g.skill.text}`;
+技能：${g.skill.name} - ${g.skill.text}`;
       } else if (j === 11) {
         detailText =
           `武将数据
 坐标：伤兵区第 ${i - 2} 位
 勇略: ${g.yl}  智谋：${g.zm}  体力：${g.tl}
-技能：${g.skill.name}
-${g.skill.text}`;
+技能：${g.skill.name} - ${g.skill.text}`;
       }
     }
     if (chess.camp === -1) {
@@ -307,6 +304,10 @@ ${g.skill.text}`;
 
   // 移动
   private requestColorMoveStuff() {
+    if(this._waitingResponse) {
+      return;
+    }
+
     this.requestWaitStart();
     let data = JSON.stringify({
       "reqStr": "postData",
@@ -381,6 +382,10 @@ ${g.skill.text}`;
   }
 
   private requestMoveStuff() {
+    if(this._waitingResponse) {
+      return;
+    }
+
     this.requestWaitStart();
     let data = JSON.stringify({
       "reqStr": "postData",
@@ -419,7 +424,11 @@ ${g.skill.text}`;
   }
 
   // 攻击
-  private requestAttackableStuff() {
+  private requestColorAttackStuff() {
+    if(this._waitingResponse) {
+      return;
+    }
+
     this.requestWaitStart();
     let data = JSON.stringify({
       "reqStr": "postData",
@@ -498,6 +507,10 @@ ${g.skill.text}`;
   }
 
   private requestAttackStuff() {
+    if(this._waitingResponse) {
+      return;
+    }
+
     this.requestWaitStart();
     let data = JSON.stringify({
       "reqStr": "postData",
@@ -673,6 +686,10 @@ ${g.skill.text}`;
 
   // 伤兵区
   private requestColorRevivalStuff() {
+    if(this._waitingResponse) {
+      return;
+    }
+
     this.requestWaitStart();
     let data = JSON.stringify({
       "reqStr": "postData",
@@ -757,6 +774,10 @@ ${g.skill.text}`;
   }
 
   private requestRevivalStuff() {
+    if(this._waitingResponse) {
+      return;
+    }
+
     this.requestWaitStart();
     let data = JSON.stringify({
       "reqStr": "postData",
@@ -793,6 +814,10 @@ ${g.skill.text}`;
 
   // 攻击城墙
   private requestAtkWallStuff() {
+    if(this._waitingResponse) {
+      return;
+    }
+
     this.requestWaitStart();
     let data = JSON.stringify({
       "reqStr": "postData",
@@ -840,6 +865,12 @@ ${g.skill.text}`;
   extraSkillMessage: any = {};
   // 使用技能
   private requestSkillStuff() {
+    if(this._waitingResponse) {
+      return;
+    }
+
+    this.requestWaitStart();
+    
     let m = this.targetIndex[0];
     let n = this.targetIndex[1];
     let i = this.operatedIndex[0];
@@ -862,8 +893,6 @@ ${g.skill.text}`;
       }
     }
 
-
-    this.requestWaitStart();
     let data = JSON.stringify({
       "reqStr": "postData",
       "action": "skill",
@@ -1686,6 +1715,8 @@ ${g.skill.text}`;
     this.textUpDetail.text = "武将数据"
     this.textUpDetail.x = 190;
     this.textUpDetail.y = 10;
+    this.textUpDetail.width = 550;
+    this.textUpDetail.height = 190;
     this.textUpDetail.fontFamily = "KaiTi";
     this.addChild(this.textUpDetail);
 
@@ -1716,6 +1747,8 @@ ${g.skill.text}`;
     this.textDownDetail.text = "武将数据"
     this.textDownDetail.x = 190;
     this.textDownDetail.y = 955;
+    this.textDownDetail.width = 550;
+    this.textDownDetail.height = 190;
     this.textDownDetail.fontFamily = "KaiTi";
     this.addChild(this.textDownDetail);
   }
@@ -1740,6 +1773,7 @@ ${g.skill.text}`;
   skillBtn: ImgBtn;
   attackWallBtn: ImgBtn;
   cancelBtn: ImgBtn;
+  // 创建武将操作菜单
   private createGeneralMenu() {
     this.generalMenu = new VerticalLayout(this);
     this.moveBtn = new ImgBtn(this);
@@ -1747,7 +1781,7 @@ ${g.skill.text}`;
     this.moveBtn.addEventListener("touchTap", this.requestColorMoveStuff, this);
     this.attackBtn = new ImgBtn(this);
     this.attackBtn.text = "攻击";
-    this.attackBtn.addEventListener("touchTap", this.beginColorAttackStuff, this);
+    this.attackBtn.addEventListener("touchTap", this.requestColorAttackStuff, this);
     this.skillBtn = new ImgBtn(this);
     this.skillBtn.text = "技能";
     this.skillBtn.addEventListener("touchTap", this.requestSkillStuff, this);
@@ -2051,11 +2085,15 @@ ${g.skill.text}`;
     }
   }
 
+  // 防止重复请求
+  private _waitingResponse = false;
   private requestWaitStart() {
-
+    // 这里添加一个 waitingView 吧 :)
+    this._waitingResponse = true;
   }
 
+  // 防止重复请求
   private requestWaitEnd() {
-
+    this._waitingResponse = false;
   }
 }

@@ -145,5 +145,40 @@
     "cost": 6,
     "text": "发动后，我方直接获得胜利",
     "onceUsed": false
+  },
+  "魏之元勋": {
+    "name": "魏之元勋",
+    "type": "锁定",
+    "cost": 0,
+    "text": "我方全体部队对敌伤害 +4",
+    "onceUsed": false
+  },
+  "武圣军魂": {
+    "name": "武圣军魂",
+    "type": "锁定",
+    "cost": 0,
+    "text": "我方全体部队移动 +1",
+    "onceUsed": false
+  },
+  "小霸王": {
+    "name": "小霸王",
+    "type": "锁定",
+    "cost": 0,
+    "text": "攻击敌军时附带勇略差伤害",
+    "onceUsed": false
+  },
+  "万弩齐张": {
+    "name": "万弩齐张",
+    "type": "普通",
+    "cost": 2,
+    "text": "本回合本部队攻击 +8，射程 +1，对骑兵伤害再 +5",
+    "onceUsed": false
+  },
+  "争功": {
+    "name": "争功",
+    "type": "发动",
+    "cost": 0,
+    "text": "回合开始阶段，使我方一支部队结束行动，使用该技能的武将会附加他的勇略和行动力",
+    "onceUsed": false
   }
 }

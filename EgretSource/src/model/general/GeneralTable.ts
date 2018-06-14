@@ -43,54 +43,24 @@ class GeneralTable {
     return resultTable;
   };
 
-  public static getGeneralsByPower(powerName: string): General[] {
-    switch (powerName) {
-      case "白":
-        return GeneralTable.getBaiGenerals();
-      case "魏":
-        return GeneralTable.getWeiGenerals();
-      case "蜀":
-        return GeneralTable.getShuGenerals();
-      case "吴":
-        return GeneralTable.getWuGenerals();
-      case "群":
-        return GeneralTable.getQunGenerals();
-      case "晋":
-        return GeneralTable.getJinGenerals();
+    let result = [];
+  public static getGeneralsByPower(p: string): General[] {
+    for (let gNum in this.getGeneralTable()) {
+      let g = this.getGeneralTable()[gNum];
+      if (g["power"] === p) {
+        result.push(g);
+      }
     }
+    return result;
   }
 
   public static getGeneralsByKey(nums: string[]): General[] {
     let gs = [];
     for (let i = 0; i < nums.length; i++) {
-      let g = GeneralTable.getGeneralTable()[nums[i]];
+      let g = this.getGeneralTable()[nums[i]];
       gs.push(g);
     }
     return gs;
-  }
-
-  public static getBaiGenerals(): General[] {
-    return this.getGeneralsByKey(["1", "2", "3", "4"]);
-  }
-
-  public static getWeiGenerals(): General[] {
-    return this.getGeneralsByKey(["5", "6", "7", "8"]);
-  }
-
-  public static getShuGenerals(): General[] {
-    return this.getGeneralsByKey(["9", "10", "11", "12"]);
-  }
-
-  public static getWuGenerals(): General[] {
-    return this.getGeneralsByKey(["13", "14", "15", "16"]);
-  }
-
-  public static getQunGenerals(): General[] {
-    return this.getGeneralsByKey(["17", "18", "19", "20"]);
-  }
-
-  public static getJinGenerals(): General[] {
-    return this.getGeneralsByKey(["21", "22", "23", "24"]);
   }
 
 }

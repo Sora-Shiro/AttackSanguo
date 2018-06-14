@@ -1,4 +1,4 @@
-class StartScene extends egret.Sprite {
+class StartScene extends egret.Sprite implements ChosenEventHandler{
 
   private par: egret.DisplayObjectContainer;
 
@@ -24,15 +24,8 @@ class StartScene extends egret.Sprite {
   textPower: egret.TextField;
   chosenPower: string;
   chosenGenerals: General[];
-  generalSortLayout: HorizontalLayout;
-  g1Name: egret.TextField;
-  g1Pos: egret.TextField;
-  g2Name: egret.TextField;
-  g2Pos: egret.TextField;
-  g3Name: egret.TextField;
-  g3Pos: egret.TextField;
-  g4Name: egret.TextField;
-  g4Pos: egret.TextField;
+  generalSortLayout: VerticalLayout;
+  generalSingleLayouts: GeneralSingleLayout[];
 
   textLog: egret.TextField;
 
@@ -127,9 +120,9 @@ class StartScene extends egret.Sprite {
       + "请安排武将的位置(1-6号)";
     this.addChild(this.textPower);
 
-    this.chosenGenerals = GeneralTable.getBaiGenerals();
+    this.chosenGenerals = GeneralTable.getGeneralsByPower("白");
 
-    this.generalSortLayout = new HorizontalLayout(this.par);
+    this.generalSortLayout = new VerticalLayout(this.par);
     this.generalSortLayout.x = 60;
     this.generalSortLayout.y = 460;
     this.generalSortLayout.layoutWidth = 400;
@@ -137,63 +130,6 @@ class StartScene extends egret.Sprite {
     this.generalSortLayout.layoutBgColorAlpha = 0;
     this.generalSortLayout.layoutSpacing = 8;
     this.addChild(this.generalSortLayout);
-
-    this.g1Name = new egret.TextField();
-    this.generalSortLayout.addLayoutChild(this.g1Name);
-    this.g1Pos = new egret.TextField();
-    this.g1Pos.width = 50;
-    this.g1Pos.restrict = "1-6";
-    this.g1Pos.text = "1";
-    this.g1Pos.multiline = false;
-    this.g1Pos.verticalAlign = egret.VerticalAlign.MIDDLE;
-    this.g1Pos.type = egret.TextFieldType.INPUT;
-    this.g1Pos.background = true;
-    this.g1Pos.backgroundColor = 0xffffff;
-    this.g1Pos.textColor = 0x000000;
-    this.g1Pos.addEventListener(egret.Event.CHANGE, this.inputPosListen, this);
-    this.generalSortLayout.addLayoutChild(this.g1Pos);
-    this.g2Name = new egret.TextField();
-    this.generalSortLayout.addLayoutChild(this.g2Name);
-    this.g2Pos = new egret.TextField();
-    this.g2Pos.width = 50;
-    this.g2Pos.restrict = "1-6";
-    this.g2Pos.text = "2";
-    this.g2Pos.multiline = false;
-    this.g2Pos.verticalAlign = egret.VerticalAlign.MIDDLE;
-    this.g2Pos.type = egret.TextFieldType.INPUT;
-    this.g2Pos.background = true;
-    this.g2Pos.backgroundColor = 0xffffff;
-    this.g2Pos.textColor = 0x000000;
-    this.g2Pos.addEventListener(egret.Event.CHANGE, this.inputPosListen, this);
-    this.generalSortLayout.addLayoutChild(this.g2Pos);
-    this.g3Name = new egret.TextField();
-    this.generalSortLayout.addLayoutChild(this.g3Name);
-    this.g3Pos = new egret.TextField();
-    this.g3Pos.width = 50;
-    this.g3Pos.restrict = "1-6";
-    this.g3Pos.text = "3";
-    this.g3Pos.multiline = false;
-    this.g3Pos.verticalAlign = egret.VerticalAlign.MIDDLE;
-    this.g3Pos.type = egret.TextFieldType.INPUT;
-    this.g3Pos.background = true;
-    this.g3Pos.backgroundColor = 0xffffff;
-    this.g3Pos.textColor = 0x000000;
-    this.g3Pos.addEventListener(egret.Event.CHANGE, this.inputPosListen, this);
-    this.generalSortLayout.addLayoutChild(this.g3Pos);
-    this.g4Name = new egret.TextField();
-    this.generalSortLayout.addLayoutChild(this.g4Name);
-    this.g4Pos = new egret.TextField();
-    this.g4Pos.width = 50;
-    this.g4Pos.restrict = "0-9";
-    this.g4Pos.text = "4";
-    this.g4Pos.multiline = false;
-    this.g4Pos.verticalAlign = egret.VerticalAlign.MIDDLE;
-    this.g4Pos.type = egret.TextFieldType.INPUT;
-    this.g4Pos.background = true;
-    this.g4Pos.backgroundColor = 0xffffff;
-    this.g4Pos.textColor = 0x000000;
-    this.g4Pos.addEventListener(egret.Event.CHANGE, this.inputPosListen, this);
-    this.generalSortLayout.addLayoutChild(this.g4Pos);
     this.setGeneralSortLayout();
 
     this.btnConnect = new ImgBtn(this, 600, 120);
@@ -241,22 +177,20 @@ class StartScene extends egret.Sprite {
     }
   }
 
-  private inputPosListen(evt: egret.Event) {
-    console.log(evt);
-    let target: egret.TextField = evt.target;
-    if (target.text.length > 1) {
-      let str = target.text;
-      let after = str.slice(0, 1);
-      target.text = after;
-    }
-  }
-
   private setGeneralSortLayout() {
     let generals = this.chosenGenerals;
-    this.g1Name.text = generals[0].name;
-    this.g2Name.text = generals[1].name;
-    this.g3Name.text = generals[2].name;
-    this.g4Name.text = generals[3].name;
+    this.generalSingleLayouts = [];
+    let i = 0;
+    let pos = -1;
+    for (; i < generals.length; i++) {
+      if (pos <= 6) {
+        pos += 1;
+      }
+      let g = generals[i];
+      let gSL = new GeneralSingleLayout(this, g, pos.toString());
+      this.generalSingleLayouts.push(gSL);
+      this.generalSortLayout.addLayoutChild(gSL);
+    }
     this.generalSortLayout.reDrawChildren();
   }
 
@@ -298,12 +232,13 @@ class StartScene extends egret.Sprite {
     this.appendLog("连接服务器中");
     // let url = `127.168.0.1`;
     let url = `23.83.226.192`;
+    let port = 7231;
     if (this.socket && this.socket.connected) {
       this.socket.close();
     }
     this.socket = GameSocket.getInstance();
     this.addSocketListener();
-    this.socket.connect(url, 8000);
+    this.socket.connect(url, 7231);
   }
 
   private appendLog(text: string) {
@@ -333,10 +268,10 @@ class StartScene extends egret.Sprite {
     this.btnJin.clickable = false;
     this.inputRoom.type = egret.TextFieldType.DYNAMIC;
     this.inputName.type = egret.TextFieldType.DYNAMIC;
-    this.g1Pos.type = egret.TextFieldType.DYNAMIC;
-    this.g2Pos.type = egret.TextFieldType.DYNAMIC;
-    this.g3Pos.type = egret.TextFieldType.DYNAMIC;
-    this.g4Pos.type = egret.TextFieldType.DYNAMIC;
+    for (let i = 0; i < this.generalSingleLayouts.length; i++) {
+      let gSL = this.generalSingleLayouts[i];
+      gSL.disableAllTouchable();
+    }
   }
 
   public enableAllTouchable() {
@@ -359,15 +294,23 @@ class StartScene extends egret.Sprite {
     this.btnJin.clickable = true;
     this.inputRoom.type = egret.TextFieldType.INPUT;
     this.inputName.type = egret.TextFieldType.INPUT;
-    this.g1Pos.type = egret.TextFieldType.INPUT;
-    this.g2Pos.type = egret.TextFieldType.INPUT;
-    this.g3Pos.type = egret.TextFieldType.INPUT;
-    this.g4Pos.type = egret.TextFieldType.INPUT;
+    for (let i = 0; i < this.generalSingleLayouts.length; i++) {
+      let gSL = this.generalSingleLayouts[i];
+      gSL.enableAllTouchable();
+    }
   }
 
   private onSocketOpen(): void {
     console.log("open");
     this.sendChosenData();
+  }
+
+  private handleChosenEvent(currentValue: boolean) {
+    this.checkCost();
+  }
+
+  private checkCost() {
+    
   }
 
   private sendChosenData() {
