@@ -10,7 +10,8 @@
     "yong": false,
     "fu": true,
     "mei": false,
-    "skill": "白板"
+    "skill": "白板",
+    "cost": 1
   },
   "2": {
     "number": 2,
@@ -23,7 +24,8 @@
     "yong": false,
     "fu": false,
     "mei": false,
-    "skill": "白板"
+    "skill": "白板",
+    "cost": 1
   },
   "3": {
     "number": 3,
@@ -36,7 +38,8 @@
     "yong": true,
     "fu": false,
     "mei": false,
-    "skill": "白板"
+    "skill": "白板",
+    "cost": 1
   },
   "4": {
     "number": 4,
@@ -49,7 +52,8 @@
     "yong": false,
     "fu": false,
     "mei": false,
-    "skill": "白板"
+    "skill": "白板",
+    "cost": 1
   },
   "5": {
     "number": 5,
@@ -62,7 +66,8 @@
     "yong": false,
     "fu": false,
     "mei": false,
-    "skill": "魏武挥鞭"
+    "skill": "魏武挥鞭",
+    "cost": 6
   },
   "6": {
     "number": 6,
@@ -75,7 +80,8 @@
     "yong": false,
     "fu": false,
     "mei": false,
-    "skill": "虎豹突击"
+    "skill": "虎豹突击",
+    "cost": 4
   },
   "7": {
     "number": 7,
@@ -88,7 +94,8 @@
     "yong": false,
     "fu": false,
     "mei": false,
-    "skill": "虎豹骑"
+    "skill": "虎豹骑",
+    "cost": 3
   },
   "8": {
     "number": 8,
@@ -101,7 +108,8 @@
     "yong": false,
     "fu": false,
     "mei": false,
-    "skill": "伏兵"
+    "skill": "伏兵",
+    "cost": 2
   },
   "9": {
     "number": 9,
@@ -114,7 +122,8 @@
     "yong": false,
     "fu": false,
     "mei": false,
-    "skill": "武侯军阵"
+    "skill": "武侯军阵",
+    "cost": 6
   },
   "10": {
     "number": 10,
@@ -127,7 +136,8 @@
     "yong": false,
     "fu": false,
     "mei": false,
-    "skill": "单骑救主"
+    "skill": "单骑救主",
+    "cost": 4
   },
   "11": {
     "number": 11,
@@ -140,7 +150,8 @@
     "yong": false,
     "fu": false,
     "mei": false,
-    "skill": "无当飞军"
+    "skill": "无当飞军",
+    "cost": 3
   },
   "12": {
     "number": 12,
@@ -153,7 +164,8 @@
     "yong": false,
     "fu": false,
     "mei": false,
-    "skill": "落石"
+    "skill": "落石",
+    "cost": 2
   },
   "13": {
     "number": 13,
@@ -166,7 +178,8 @@
     "yong": false,
     "fu": false,
     "mei": false,
-    "skill": "火烧赤壁"
+    "skill": "火烧赤壁",
+    "cost": 6
   },
   "14": {
     "number": 14,
@@ -179,7 +192,8 @@
     "yong": false,
     "fu": false,
     "mei": false,
-    "skill": "天弓"
+    "skill": "天弓",
+    "cost": 4
   },
   "15": {
     "number": 15,
@@ -192,11 +206,12 @@
     "yong": false,
     "fu": false,
     "mei": false,
-    "skill": "丹阳卫"
+    "skill": "丹阳卫",
+    "cost": 3
   },
   "16": {
     "number": 16,
-    "name": "周瑜",
+    "name": "孙尚香",
     "power": "吴",
     "rare": "SR",
     "yl": 2,
@@ -205,7 +220,8 @@
     "yong": false,
     "fu": false,
     "mei": false,
-    "skill": "弓腰之乐"
+    "skill": "弓腰之乐",
+    "cost": 2
   },
   "17": {
     "number": 17,
@@ -218,7 +234,8 @@
     "yong": false,
     "fu": false,
     "mei": false,
-    "skill": "天下无双"
+    "skill": "天下无双",
+    "cost": 6
   },
   "18": {
     "number": 18,
@@ -231,7 +248,8 @@
     "yong": false,
     "fu": false,
     "mei": false,
-    "skill": "暴虐突击"
+    "skill": "暴虐突击",
+    "cost": 5
   },
   "19": {
     "number": 19,
@@ -244,7 +262,8 @@
     "yong": false,
     "fu": false,
     "mei": false,
-    "skill": "陷阵营"
+    "skill": "陷阵营",
+    "cost": 3
   },
   "20": {
     "number": 20,
@@ -257,7 +276,8 @@
     "yong": false,
     "fu": false,
     "mei": false,
-    "skill": "天雷"
+    "skill": "天雷",
+    "cost": 2
   },
   "21": {
     "number": 21,
@@ -270,7 +290,8 @@
     "yong": false,
     "fu": false,
     "mei": false,
-    "skill": "晋宣军略"
+    "skill": "晋宣军略",
+    "cost": 6
   },
   "22": {
     "number": 22,
@@ -283,11 +304,12 @@
     "yong": false,
     "fu": false,
     "mei": false,
-    "skill": "景王权术"
+    "skill": "景王权术",
+    "cost": 5
   },
   "23": {
     "number": 23,
-    "name": "司马懿",
+    "name": "邓艾",
     "power": "晋",
     "rare": "SR",
     "yl": 5,
@@ -296,7 +318,8 @@
     "yong": false,
     "fu": false,
     "mei": false,
-    "skill": "偷渡阴平"
+    "skill": "偷渡阴平",
+    "cost": 4
   },
   "24": {
     "number": 24,
@@ -309,6 +332,77 @@
     "yong": false,
     "fu": false,
     "mei": false,
-    "skill": "三分归晋"
+    "skill": "三分归晋",
+    "cost": 2
+  },
+  "25": {
+    "number": 25,
+    "name": "夏侯惇",
+    "power": "魏",
+    "rare": "SR",
+    "yl": 9,
+    "zm": 4,
+    "arms": "骑",
+    "yong": false,
+    "fu": false,
+    "mei": false,
+    "skill": "魏之元勋",
+    "cost": 5
+  },
+  "26": {
+    "number": 26,
+    "name": "关羽",
+    "power": "蜀",
+    "rare": "SR",
+    "yl": 9,
+    "zm": 7,
+    "arms": "步",
+    "yong": false,
+    "fu": false,
+    "mei": false,
+    "skill": "武圣军魂",
+    "cost": 5
+  },
+  "27": {
+    "number": 27,
+    "name": "孙策",
+    "power": "吴",
+    "rare": "SR",
+    "yl": 9,
+    "zm": 4,
+    "arms": "骑",
+    "yong": false,
+    "fu": false,
+    "mei": false,
+    "skill": "小霸王",
+    "cost": 5
+  },
+  "28": {
+    "number": 28,
+    "name": "袁绍",
+    "power": "群",
+    "rare": "SR",
+    "yl": 7,
+    "zm": 5,
+    "arms": "弓",
+    "yong": false,
+    "fu": false,
+    "mei": false,
+    "skill": "万弩齐张",
+    "cost": 4
+  },
+  "29": {
+    "number": 29,
+    "name": "钟会",
+    "power": "晋",
+    "rare": "SR",
+    "yl": 6,
+    "zm": 7,
+    "arms": "弓",
+    "yong": false,
+    "fu": false,
+    "mei": false,
+    "skill": "争功",
+    "cost": 3
   }
 }

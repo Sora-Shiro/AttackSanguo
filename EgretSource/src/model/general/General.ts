@@ -12,6 +12,7 @@ class General {
   yong: boolean;
   fu: boolean;
   mei: boolean;
+  cost: number;
 
   skill: Skill;
 
@@ -42,6 +43,7 @@ class General {
     this.yong = false;
     this.fu = true;
     this.mei = true;
+    this.cost = 0;
     this.skill = SkillTable.getSkillTable()["白板"];
 
     this.hasMoved = false;
@@ -90,6 +92,7 @@ class General {
     g.yong = getRandomNum(0, 2) === 1 ? true : false;
     g.fu = getRandomNum(0, 2) === 1 ? true : false;
     g.mei = getRandomNum(0, 2) === 1 ? true : false;
+    g.cost = getRandomNum(0, 10);
     return g;
   };
 
@@ -109,6 +112,7 @@ class General {
     general.fu = g["fu"];
     general.mei = g["mei"];
     general.skill = SkillTable.getSkillTable()[g["skill"]];
+    general.cost = g["cost"];
     return general;
   }
 }

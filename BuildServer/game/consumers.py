@@ -153,12 +153,24 @@ def enter_room(message, user_name, room_name, g_detail):
             "close": True
         })
         return
-    pos1 = g_detail["g1"]["pos"]
-    pos2 = g_detail["g2"]["pos"]
-    pos3 = g_detail["g3"]["pos"]
-    pos4 = g_detail["g4"]["pos"]
-    pos_set = {pos1, pos2, pos3, pos4}
-    if len(pos_set) != 4:
+    if len(g_detail) == 0:
+        message.reply_channel.send({
+            "text": json.dumps({
+                "status": -1,
+                "resStr": "emptyGeneral",
+                "msg": u"没有选中任何武将",
+            }),
+            "close": True
+        })
+        return
+    g_pos = []
+    g_num = []
+    for g in g_detail:
+        pos = g["pos"]
+        g_pos.append(pos)
+        num = g["num"]
+        g_num.append(num)
+    if len(set(g_pos)) != len(g_pos):
         message.reply_channel.send({
             "text": json.dumps({
                 "status": -1,
@@ -168,16 +180,13 @@ def enter_room(message, user_name, room_name, g_detail):
             "close": True
         })
         return
-    # Check if generals are same power
-    n1 = str(g_detail["g1"]["num"])
-    n2 = str(g_detail["g2"]["num"])
-    n3 = str(g_detail["g3"]["num"])
-    n4 = str(g_detail["g4"]["num"])
-    in1 = n1 in GeneralTable
-    in2 = n2 in GeneralTable
-    in3 = n3 in GeneralTable
-    in4 = n4 in GeneralTable
-    if not (in1 and in2 and in3 and in4):
+    # Check if generals are exit
+    num_result = True
+    for num in g_num:
+        if str(num) not in GeneralTable:
+            num_result = False
+            break
+    if not num_result:
         message.reply_channel.send({
             "text": json.dumps({
                 "status": -1,
@@ -187,11 +196,14 @@ def enter_room(message, user_name, room_name, g_detail):
             "close": True
         })
         return
-    p1 = GeneralTable[n1]["power"]
-    p2 = GeneralTable[n2]["power"]
-    p3 = GeneralTable[n3]["power"]
-    p4 = GeneralTable[n4]["power"]
-    if not (p1 == p2 == p3 == p4):
+    g_power = set()
+    g_total_cost = 0
+    for num in g_num:
+        p = GeneralTable[str(num)]["power"]
+        c = GeneralTable[str(num)]["cost"]
+        g_power.add(p)
+        g_total_cost += c
+    if len(g_power) != 1:
         message.reply_channel.send({
             "text": json.dumps({
                 "status": -1,
@@ -201,7 +213,17 @@ def enter_room(message, user_name, room_name, g_detail):
             "close": True
         })
         return
-
+    if g_total_cost > 16:
+        message.reply_channel.send({
+            "text": json.dumps({
+                "status": -1,
+                "msg": "limitCost",
+                "resStr": u"Cost 花费超过 16",
+            }),
+            "close": True
+        })
+        return
+    current_power = GeneralTable[str(g_num[0])]["power"]
     # Handle enter room
     # Set the username in the session
     message.channel_session["room_name"] = room_name
@@ -209,7 +231,7 @@ def enter_room(message, user_name, room_name, g_detail):
     if len(room["downPlayer"]) == 0:
         room["downPlayer"] = user_name
         room["downGenerals"] = g_detail
-        room["downPower"] = p1
+        room["downPower"] = current_power
         message.reply_channel.send({
             "text": json.dumps({
                 "status": 0,
@@ -228,7 +250,7 @@ def enter_room(message, user_name, room_name, g_detail):
     elif len(room["upPlayer"]) == 0:
         room["upPlayer"] = user_name
         room["upGenerals"] = g_detail
-        room["upPower"] = p1
+        room["upPower"] = current_power
         message.reply_channel.send({
             "text": json.dumps({
                 "status": 0,
@@ -302,9 +324,9 @@ def start_game(room_name):
             {"g": None, "camp": 0},
             {"g": None, "camp": 0}
         ]
-        for key, value in room["upGenerals"].items():
-            num = value["num"]
-            pos = int(value["pos"])
+        for general in room["upGenerals"]:
+            num = general["num"]
+            pos = int(general["pos"])
             g = GeneralTable[str(num)]
             if g["mei"]:
                 room["upWall"] += 5
@@ -318,9 +340,9 @@ def start_game(room_name):
             {"g": None, "camp": 0},
             {"g": None, "camp": 0}
         ]
-        for key, value in room["downGenerals"].items():
-            num = value["num"]
-            pos = int(value["pos"])
+        for general in room["downGenerals"]:
+            num = general["num"]
+            pos = int(general["pos"])
             g = GeneralTable[str(num)]
             if g["mei"]:
                 room["downWall"] += 5

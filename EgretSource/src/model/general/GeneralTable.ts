@@ -43,8 +43,8 @@ class GeneralTable {
     return resultTable;
   };
 
-    let result = [];
   public static getGeneralsByPower(p: string): General[] {
+    let result = [];
     for (let gNum in this.getGeneralTable()) {
       let g = this.getGeneralTable()[gNum];
       if (g["power"] === p) {

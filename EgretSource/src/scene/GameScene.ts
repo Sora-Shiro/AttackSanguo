@@ -1507,7 +1507,6 @@ class GameScene extends egret.Sprite {
 
   private requestTurnEndStuff() {
     this.btnTurnEnd.visible = false;
-    // TODO: 添加单机联机模式后需要更改这部分代码
     if (this.socket && this.socket.connected) {
       let data = JSON.stringify({
         "reqStr": "postData",

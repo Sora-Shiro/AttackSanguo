@@ -1,8 +1,9 @@
 class GeneralSingleLayout extends egret.Sprite {
 
-  private chosenView: eui.CheckBox;
+  private chosenView: CheckBox;
   private gName: egret.TextField;
   private gPos: egret.TextField;
+  private gCos: egret.TextField;
 
   private _chosenEventHandler: ChosenEventHandler;
   public get eventHandler(): ChosenEventHandler {
@@ -106,9 +107,9 @@ class GeneralSingleLayout extends egret.Sprite {
   constructor(parent: any, general: General, pos: string) {
     super();
     this._layoutWidth = 573;
-    this._layoutHeight = 573;
+    this._layoutHeight = 50;
     this._layoutBgColor = 0xeeeeee;
-    this._layoutBgColorAlpha = 1;
+    this._layoutBgColorAlpha = 0;
     this._layoutSpacing = 20;
     this._layoutPaddingTop = 0;
     this._layoutPaddingLeft = 0;
@@ -123,18 +124,21 @@ class GeneralSingleLayout extends egret.Sprite {
     this.graphics.beginFill(this._layoutBgColor, this._layoutBgColorAlpha);
     this.graphics.drawRect(0, 0, this._layoutWidth, this._layoutHeight);
     this.graphics.endFill();
-    this.chosenView = new eui.CheckBox();
-    this.chosenView.addEventListener(
-      eui.UIEvent.CHANGE,
-      this.chosenEvent,
-      this
-    );
+    this.chosenView = new CheckBox(this, 50, 50);
+    this.chosenView.textY = 10;
+    this.chosenView.addEventListener("touchTap", this.chosenEvent, this);
     this.addLayoutChild(this.chosenView);
     this.gName = new egret.TextField();
     this.gName.text = this.general.name;
+    this.gName.y = 10;
     this.addLayoutChild(this.gName);
+    this.gCos = new egret.TextField();
+    this.gCos.text = this.general.cost.toString();
+    this.gCos.y = 10;
+    this.addLayoutChild(this.gCos);
     this.gPos = new egret.TextField();
     this.gPos.width = 50;
+    this.gPos.y = 10;
     this.gPos.restrict = "1-6";
     this.gPos.text = this._pos;
     this.gPos.multiline = false;
@@ -144,11 +148,15 @@ class GeneralSingleLayout extends egret.Sprite {
     this.gPos.backgroundColor = 0xffffff;
     this.gPos.textColor = 0x000000;
     this.gPos.addEventListener(egret.Event.CHANGE, this.inputPosListen, this);
+    this.addLayoutChild(this.gPos);
   }
 
-  private chosenEvent(evt: eui.UIEvent) {
+  private chosenEvent(evt: egret.Event) {
+    let s = !this.chosenView.selected;
+    this.chosenView.selected = s;
+    this.chosen = s;
     if(this._chosenEventHandler) {
-      this._chosenEventHandler.handleChosenEvent(this.chosenView.selected);
+      this._chosenEventHandler.handleChosenEvent(this.chosen);
     }
   }
 
@@ -183,13 +191,13 @@ class GeneralSingleLayout extends egret.Sprite {
   public addLayoutChild(child: egret.DisplayObject, pos: number = this.$children.length - 1) {
     let len = this.$children.length;
     if (len === 0) {
-      child.x = this._layoutPaddingLeft;
-      child.y = this._layoutPaddingTop;
+      child.x += this._layoutPaddingLeft;
+      child.y += this._layoutPaddingTop;
       this.addChild(child);
     } else {
       let sprite = this.getChildAt(len - 1);
-      child.x = sprite.x + sprite.width + this._layoutSpacing;
-      child.y = this._layoutPaddingTop;
+      child.x += sprite.x + sprite.width + this._layoutSpacing;
+      child.y += this._layoutPaddingTop;
       this.addChild(child);
     }
   }

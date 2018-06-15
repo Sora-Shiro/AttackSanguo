@@ -8,10 +8,27 @@ class StartScene extends egret.Sprite implements ChosenEventHandler{
     this.createScene();
   }
 
+  private totalCost = 16;
+  private _remainCost: number = this.totalCost;
+  public get remainCost(): number {
+    return this._remainCost;
+  }
+  public set remainCost(v: number) {
+    this._remainCost = v;
+    if (this.textCost) {
+      if (this._remainCost < 0) {
+        this.textCost.text = "你用了太多 Cost 了，节制一下 :)\n剩余 Cost：" + this._remainCost.toString();
+      } else {
+        this.textCost.text = "剩余 Cost：" + this._remainCost.toString();
+      }
+    }
+  }
+
   textRoom: egret.TextField;
   inputRoom: egret.TextField;
   textName: egret.TextField;
   inputName: egret.TextField;
+  textCost: egret.TextField;
   btnConnect: ImgBtn;
   btnAbout: ImgBtn;
 
@@ -120,11 +137,17 @@ class StartScene extends egret.Sprite implements ChosenEventHandler{
       + "请安排武将的位置(1-6号)";
     this.addChild(this.textPower);
 
+    this.textCost = new egret.TextField();
+    this.textCost.x = 60;
+    this.textCost.y = 460;
+    this.textCost.text = "剩余 Cost：" + this._remainCost;
+    this.addChild(this.textCost);
+
     this.chosenGenerals = GeneralTable.getGeneralsByPower("白");
 
     this.generalSortLayout = new VerticalLayout(this.par);
     this.generalSortLayout.x = 60;
-    this.generalSortLayout.y = 460;
+    this.generalSortLayout.y = 540;
     this.generalSortLayout.layoutWidth = 400;
     this.generalSortLayout.layoutHeight = 100;
     this.generalSortLayout.layoutBgColorAlpha = 0;
@@ -132,21 +155,21 @@ class StartScene extends egret.Sprite implements ChosenEventHandler{
     this.addChild(this.generalSortLayout);
     this.setGeneralSortLayout();
 
-    this.btnConnect = new ImgBtn(this, 600, 120);
+    this.btnConnect = new ImgBtn(this, 350, 120);
     this.btnConnect.text = "连接";
     this.btnConnect.anchorOffsetX = 300;
-    this.btnConnect.x = 750 / 2;
-    this.btnConnect.y = 530;
+    this.btnConnect.x = 600;
+    this.btnConnect.y = 850;
     this.btnConnect.textY = 35;
     this.btnConnect.textSize = 35;
     this.btnConnect.addEventListener("touchTap", this.onBtnConnectTap, this);
     this.addChild(this.btnConnect);
 
-    this.btnAbout = new ImgBtn(this, 600, 120);
+    this.btnAbout = new ImgBtn(this, 350, 120);
     this.btnAbout.text = "关于本游戏";
-    this.btnAbout.anchorOffsetX = this.btnAbout.btnWidth / 2;
-    this.btnAbout.x = 750 / 2;
-    this.btnAbout.y = 680;
+    this.btnAbout.anchorOffsetX = 300;
+    this.btnAbout.x = 600;
+    this.btnAbout.y = this.btnConnect.y + 150;
     this.btnAbout.textY = 35;
     this.btnAbout.textSize = 35;
     this.btnAbout.addEventListener("touchTap", this.onBtnAboutTap, this);
@@ -180,6 +203,7 @@ class StartScene extends egret.Sprite implements ChosenEventHandler{
   private setGeneralSortLayout() {
     let generals = this.chosenGenerals;
     this.generalSingleLayouts = [];
+    this.generalSortLayout.removeChildren();
     let i = 0;
     let pos = -1;
     for (; i < generals.length; i++) {
@@ -188,10 +212,11 @@ class StartScene extends egret.Sprite implements ChosenEventHandler{
       }
       let g = generals[i];
       let gSL = new GeneralSingleLayout(this, g, pos.toString());
+      gSL.eventHandler = this;
       this.generalSingleLayouts.push(gSL);
       this.generalSortLayout.addLayoutChild(gSL);
     }
-    this.generalSortLayout.reDrawChildren();
+    // this.generalSortLayout.reDrawChildren();
   }
 
   private onBtnBaiTap() {
@@ -223,6 +248,8 @@ class StartScene extends egret.Sprite implements ChosenEventHandler{
     this.chosenGenerals = GeneralTable.getGeneralsByPower(power);
     this.textPower.text = "当前选择势力：" + this.chosenPower + "\n"
       + "请安排武将的位置(1-6号)";
+    // Refresh cost
+    this.remainCost = 16;
     this.setGeneralSortLayout();
   }
 
@@ -230,9 +257,8 @@ class StartScene extends egret.Sprite implements ChosenEventHandler{
   private onBtnConnectTap() {
     this.disableAllTouchable();
     this.appendLog("连接服务器中");
-    // let url = `127.168.0.1`;
-    let url = `23.83.226.192`;
-    let port = 7231;
+    let url = Constant.LOCAL_SERVER_IP;
+    let port = Constant.LOCAL_SERVER_PORT;
     if (this.socket && this.socket.connected) {
       this.socket.close();
     }
@@ -305,39 +331,45 @@ class StartScene extends egret.Sprite implements ChosenEventHandler{
     this.sendChosenData();
   }
 
-  private handleChosenEvent(currentValue: boolean) {
+  public handleChosenEvent(currentValue: boolean) {
     this.checkCost();
   }
 
   private checkCost() {
-    
+    let usedCost = 0;
+    for(let i = 0; i < this.generalSingleLayouts.length; i++) {
+      let gSL = this.generalSingleLayouts[i];
+      if (gSL.chosen) {
+        usedCost += gSL.general.cost;
+      }
+    }
+    this.remainCost = this.totalCost - usedCost;
+    if(this.remainCost < 0) {
+      this.btnConnect.touchEnabled = false;
+      this.btnConnect.clickable = false;
+    } else {
+      this.btnConnect.touchEnabled = true;
+      this.btnConnect.clickable = true;
+    }
   }
 
   private sendChosenData() {
     let roomName = this.inputRoom.text;
     let userName = this.inputName.text;
-    let g1Num = this.chosenGenerals[0].number;
-    let g2Num = this.chosenGenerals[1].number;
-    let g3Num = this.chosenGenerals[2].number;
-    let g4Num = this.chosenGenerals[3].number;
-    let gDetail = {
-      g1: {
-        "num": g1Num,
-        "pos": this.g1Pos.text,
-      },
-      g2: {
-        "num": g2Num,
-        "pos": this.g2Pos.text,
-      },
-      g3: {
-        "num": g3Num,
-        "pos": this.g3Pos.text,
-      },
-      g4: {
-        "num": g4Num,
-        "pos": this.g4Pos.text,
-      },
-    };
+
+    let gDetail = [];
+    for(let i = 0; i < this.generalSingleLayouts.length; i++) {
+      let gSL = this.generalSingleLayouts[i];
+      let selected = gSL.chosen;
+      if (selected) {
+        let data = {
+          "num": gSL.general.number,
+          "pos": gSL.pos
+        };
+        gDetail.push(data);
+      }
+    }
+
     let data = JSON.stringify({
       "reqStr": "enterRoom",
       "roomName": roomName,
