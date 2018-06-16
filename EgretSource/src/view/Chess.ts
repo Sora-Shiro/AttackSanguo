@@ -77,6 +77,12 @@ class Chess extends egret.Sprite {
       case "revival_confirm":
         bgColor = 0xfff5a2;
         break;
+      case "skillable":
+        bgColor = 0x7FFFAA;
+        break;
+      case "skillable_confirm":
+        bgColor = 0x00FA9A;
+        break;
     }
     this.graphics.beginFill(bgColor);
     this.graphics.drawRect(0, 0, 91, 92);

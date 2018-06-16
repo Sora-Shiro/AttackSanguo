@@ -4,6 +4,8 @@ class GameScene extends egret.Sprite {
   private initData: InitData;
   private startScene: StartScene;
 
+  private hasAddMorale: boolean = false;
+
   constructor(par, initData: InitData, startScene: StartScene) {
     super();
     this.par = par;
@@ -165,6 +167,13 @@ class GameScene extends egret.Sprite {
         case "revival_confirm":
           this.targetIndex = [i, j];
           this.requestRevivalStuff();
+          break;
+        case "skillable":
+          chess.status = "skill_confirm";
+          break;
+        case "skillable_confirm":
+          this.targetIndex = [i, j];
+          this.requestSkillStuff();
           break;
       }
     }
@@ -588,6 +597,26 @@ class GameScene extends egret.Sprite {
     }
 
     let finalTl = targetTl - finalDecrease;
+
+    // 额外伤害
+    if(operatedG.extraMessage["extraDamage"]) {
+      finalTl -= operatedG.extraMessage["extraDamage"];
+    }
+
+    // 小霸王：攻击附带谋略差伤害
+    if(operatedG.skill.name === "小霸王") {
+      let dZm = operatedG.zm - targetG.zm;
+      if (dZm < 0) dZm = 0;
+      finalTl -= dZm;
+    }
+
+    // 万弩齐张：骑兵额外伤害
+    if(operatedG.extraMessage["extraDamageToQiBin"]) {
+      if(targetG.arms === "骑") {
+        finalTl -= 5;
+      }
+    }
+
     finalTl = finalTl < 0 ? 0 : finalTl;
     targetG.tl = finalTl;
     targetChess.general = targetG;
@@ -635,7 +664,26 @@ class GameScene extends egret.Sprite {
     this.requestAttackStuff();
   }
 
-  private checkAlive(i: number, j: number): boolean {
+  private colorZhenggongStuff() {
+    let i = this.operatedIndex[0];
+    let j = this.operatedIndex[1];
+    let chesses = this.chessBoard.chesses;
+    let operatedCamp = chesses[i][j].camp;
+    for (let m = 0; m < 6; m++) {
+      for (let n = 0; n < 6; n++) {
+        if (m === i && n === j) {
+          continue;
+        }
+        let chess = chesses[m][n];
+        let camp = chess.camp;
+        if (camp === operatedCamp) {
+          chess[m][n].status = "skillable";
+        }
+      }
+    }
+  }
+
+  private checkAlive(i: number, j: number, defeated: boolean = true): boolean {
     let chess: Chess = this.chessBoard.chesses[i][j];
     let g: General = chess.general;
     if (g.tl <= 0) {
@@ -677,6 +725,16 @@ class GameScene extends egret.Sprite {
             break;
           }
         }
+      }
+      // 被击败的话，对方增加士气，但一回合只能一次
+      if(defeated && !this.hasAddMorale) {
+        let addCamp = -chess.camp;
+        if(addCamp === 1) {
+          this.downMorale += 1;
+        } else if(addCamp === -1) {
+          this.upMorale += 1;
+        }
+        this.hasAddMorale = true;
       }
       return false;
     } else {
@@ -998,6 +1056,23 @@ class GameScene extends egret.Sprite {
       case "三分归晋":
         this.operateGameOverStuff(operatedCamp);
         break;
+      case "万弩齐张":
+        operatedG.extraYl += 8;
+        operatedG.extraAtkRange += 1;
+        if(operatedG.extraMessage["extraDamageToQiBin"]) {
+          operatedG.extraMessage["extraDamageToQiBin"] += 5;
+        } else {
+          operatedG.extraMessage["extraDamageToQiBin"] = 5;
+        }
+        this.changeExtraToGenerals(-operatedCamp, "all", 0, 0, 0, 0, { "addHurtTurns": 1 });
+        break;
+      case "争功":
+        targetG.hasMoved = true;
+        targetG.hasAttacked = true;
+        targetG.hasSkilled = true;
+        operatedG.extraYl += targetG.yl + targetG.extraYl;
+        operatedG.extraMoveStep += targetG.armsInfo.moveStep + targetG.extraMoveStep;
+        break;
     }
 
     operatedG.hasSkilled = true;
@@ -1068,6 +1143,12 @@ class GameScene extends egret.Sprite {
       dZm *= 2;
       dZm += 15;
       let finalTl = targetG.tl - dZm;
+
+      // 额外伤害
+      if(operatedG.extraMessage["extraDamage"]) {
+        finalTl -= operatedG.extraMessage["extraDamage"];
+      }
+
       finalTl = finalTl < 0 ? 0 : finalTl;
       targetG.tl = finalTl;
       targetChess.general = targetG;
@@ -1083,6 +1164,12 @@ class GameScene extends egret.Sprite {
         dZm *= 2;
         dZm += 10;
         let finalTl = targetG.tl - dZm;
+
+        // 额外伤害
+        if(operatedG.extraMessage["extraDamage"]) {
+          finalTl -= operatedG.extraMessage["extraDamage"];
+        }
+
         finalTl = finalTl < 0 ? 0 : finalTl;
         targetG.tl = finalTl;
         targetChess.general = targetG;
@@ -1155,6 +1242,12 @@ class GameScene extends egret.Sprite {
       dZm *= 3;
       dZm += 5;
       let finalTl = targetG.tl - dZm;
+
+      // 额外伤害
+      if(operatedG.extraMessage["extraDamage"]) {
+        finalTl -= operatedG.extraMessage["extraDamage"];
+      }
+
       finalTl = finalTl < 0 ? 0 : finalTl;
       targetG.tl = finalTl;
       targetChess.general = targetG;
@@ -1324,6 +1417,12 @@ class GameScene extends egret.Sprite {
       dZm *= 2;
       dZm += 10;
       let finalTl = targetG.tl - dZm;
+      
+      // 额外伤害
+      if(operatedG.extraMessage["extraDamage"]) {
+        finalTl -= operatedG.extraMessage["extraDamage"];
+      }
+
       finalTl = finalTl < 0 ? 0 : finalTl;
       targetG.tl = finalTl;
       targetChess.general = targetG;
@@ -1479,12 +1578,16 @@ class GameScene extends egret.Sprite {
                 case "decreaseTl":
                   g.tl -= message[key];
                 default:
-                  g.extraMessage[key] = message[key];
+                  if(key in g.extraMessage) {
+                    g.extraMessage[key] += message[key];
+                  } else {
+                    g.extraMessage[key] = message[key];
+                  }
                   break;
               }
             }
             chess.general = g;
-            this.checkAlive(i, j);
+            this.checkAlive(i, j, false);
           }
         }
       }
@@ -1547,7 +1650,11 @@ class GameScene extends egret.Sprite {
         chess.general = g;
       }
     }
-    // 重置行动能力
+    // 扫描所有我方武将
+    // 1. 重置行动能力
+    // 2. 触发特定技能
+    // 3. 争功
+    let skillZhenggong = false;
     for (let i = 0; i < 6; i++) {
       for (let j = 0; j < 6; j++) {
         let chess = this.chessBoard.chesses[i][j];
@@ -1555,18 +1662,34 @@ class GameScene extends egret.Sprite {
           let g = chess.general;
           g.hasMoved = false;
           g.hasAttacked = false;
+          switch(g.skill.name) {
+            case "魏之元勋":
+              this.changeExtraToGenerals(this.currentCamp, "all", 0, 0, 0, 0, { "extraDamage": 4 });
+              break;
+            case "武圣军魂":
+              this.changeExtraToGenerals(this.currentCamp, "all", 0, 0, 0, 1, {});
+              break;
+            case "争功":
+              skillZhenggong = true;
+              break;
+          }
         }
       }
     }
-    // 增加士气
+    // 增加士气，清除击败士气标记
     if (this.currentCamp === -1) {
       this.upMorale++;
     } else {
       this.downMorale++;
     }
+    this.hasAddMorale = false;
     // 回合结束按钮可见
     if ((this.playerCamp === this.currentCamp)) {
       this.btnTurnEnd.visible = true;
+    }
+    // 争功处理
+    if (skillZhenggong) {
+      this.colorZhenggongStuff();
     }
   }
 
