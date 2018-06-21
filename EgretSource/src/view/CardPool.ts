@@ -2,10 +2,10 @@ class CardPool extends egret.Sprite {
 
   public cardTapHandler: CardTapHandler;
 
-  private currentCard: Card;
+  public currentCard: Card;
   private cards: Card[];
-  private leftBtn: ImgBtn;
-  private rightBtn: ImgBtn;
+  public leftBtn: ImgBtn;
+  public rightBtn: ImgBtn;
 
   private _generalList: General[];
   get generalList(): General[] {

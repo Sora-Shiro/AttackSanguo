@@ -17,7 +17,7 @@ class StartScene extends egret.Sprite implements ChosenEventHandler, CardTapHand
     this._remainCost = v;
     if (this.textCost) {
       if (this._remainCost < 0) {
-        this.textCost.text = "你用了太多 Cost 了，节制一下 :)\n剩余 Cost：" + this._remainCost.toString();
+        this.textCost.text = "你用了太多 Cost 了，节制一下 :) 剩余 Cost：" + this._remainCost.toString();
       } else {
         this.textCost.text = "剩余 Cost：" + this._remainCost.toString();
       }
@@ -49,19 +49,19 @@ class StartScene extends egret.Sprite implements ChosenEventHandler, CardTapHand
 
   private createScene() {
     this.textRoom = new egret.TextField();
-    this.textRoom.x = 60;
+    this.textRoom.x = 30;
     this.textRoom.y = 30;
     this.textRoom.text = "房间号码";
     this.addChild(this.textRoom);
 
     this.inputRoom = new egret.TextField();
-    this.inputRoom.width = 200;
+    this.inputRoom.width = 100;
     this.inputRoom.height = 60;
     this.inputRoom.restrict = "0-9 A-Z_a-z";
     this.inputRoom.multiline = false;
     this.inputRoom.type = egret.TextFieldType.INPUT;
     this.inputRoom.verticalAlign = egret.VerticalAlign.MIDDLE;
-    this.inputRoom.x = 200;
+    this.inputRoom.x = this.textRoom.x + 150;
     this.inputRoom.y = this.textRoom.y - 20;
     this.inputRoom.background = true;
     this.inputRoom.backgroundColor = 0xffffff;
@@ -70,19 +70,19 @@ class StartScene extends egret.Sprite implements ChosenEventHandler, CardTapHand
     this.addChild(this.inputRoom);
 
     this.textName = new egret.TextField();
-    this.textName.x = 60;
-    this.textName.y = this.textRoom.y + 80;
+    this.textName.x = 300;
+    this.textName.y = this.textRoom.y;
     this.textName.text = "玩家名字";
     this.addChild(this.textName);
 
     this.inputName = new egret.TextField();
-    this.inputName.width = 200;
+    this.inputName.width = 150;
     this.inputName.height = 60;
     this.inputName.restrict = "0-9 A-Z_a-z";
     this.inputName.multiline = false;
     this.inputName.verticalAlign = egret.VerticalAlign.MIDDLE;
     this.inputName.type = egret.TextFieldType.INPUT;
-    this.inputName.x = 200;
+    this.inputName.x = this.textName.x + 150;
     this.inputName.y = this.textName.y - 20;
     this.inputName.background = true;
     this.inputName.backgroundColor = 0xffffff;
@@ -132,15 +132,15 @@ class StartScene extends egret.Sprite implements ChosenEventHandler, CardTapHand
 
     this.chosenPower = "白";
     this.textPower = new egret.TextField();
-    this.textPower.x = 60;
+    this.textPower.x = 30;
     this.textPower.y = powerLayout.y + 70;
-    this.textPower.text = "当前选择势力：" + this.chosenPower + "\n"
+    this.textPower.text = "当前选择势力：" + this.chosenPower + "  "
       + "请安排武将的位置(1-6号)";
     this.addChild(this.textPower);
 
     this.textCost = new egret.TextField();
-    this.textCost.x = 60;
-    this.textCost.y = this.textPower.y + 60;
+    this.textCost.x = 30;
+    this.textCost.y = this.textPower.y + 30;
     this.textCost.text = "剩余 Cost：" + this._remainCost;
     this.addChild(this.textCost);
 
@@ -148,13 +148,13 @@ class StartScene extends egret.Sprite implements ChosenEventHandler, CardTapHand
 
     this.cardPool = new CardPool(this.chosenGenerals);
     this.cardPool.x = 50;
-    this.cardPool.y = this.textCost.y + 60;
+    this.cardPool.y = this.textCost.y + 30;
     this.cardPool.cardTapHandler = this;
     this.addChild(this.cardPool);
 
     this.generalSortLayout = new VerticalLayout(this.par);
     this.generalSortLayout.x = 60;
-    this.generalSortLayout.y = this.cardPool.y + 60;
+    this.generalSortLayout.y = this.cardPool.y + this.cardPool.height + 10;
     this.generalSortLayout.layoutWidth = 400;
     this.generalSortLayout.layoutHeight = 100;
     this.generalSortLayout.layoutBgColorAlpha = 0;
@@ -162,34 +162,30 @@ class StartScene extends egret.Sprite implements ChosenEventHandler, CardTapHand
     this.addChild(this.generalSortLayout);
     this.setGeneralSortLayout();
 
-
-
-    this.btnConnect = new ImgBtn(this, 350, 120);
+    this.btnConnect = new ImgBtn(this, 200, 60);
     this.btnConnect.text = "连接";
-    this.btnConnect.anchorOffsetX = 300;
-    this.btnConnect.x = 600;
-    this.btnConnect.y = 850;
-    this.btnConnect.textY = 35;
-    this.btnConnect.textSize = 35;
+    this.btnConnect.x = 500;
+    this.btnConnect.y = 1000;
+    this.btnConnect.textY = 20;
+    this.btnConnect.textSize = 25;
     this.btnConnect.addEventListener("touchTap", this.onBtnConnectTap, this);
     this.addChild(this.btnConnect);
 
-    this.btnAbout = new ImgBtn(this, 350, 120);
+    this.btnAbout = new ImgBtn(this, 200, 60);
     this.btnAbout.text = "关于本游戏";
-    this.btnAbout.anchorOffsetX = 300;
-    this.btnAbout.x = 600;
-    this.btnAbout.y = this.btnConnect.y + 150;
-    this.btnAbout.textY = 35;
-    this.btnAbout.textSize = 35;
+    this.btnAbout.x = this.btnConnect.x;
+    this.btnAbout.y = this.btnConnect.y + this.btnConnect.height + 5;
+    this.btnAbout.textY = 20;
+    this.btnAbout.textSize = 25;
     this.btnAbout.addEventListener("touchTap", this.onBtnAboutTap, this);
     this.addChild(this.btnAbout);
 
     this.textLog = new egret.TextField();
-    this.textLog.x = 60;
-    this.textLog.y = 850;
+    this.textLog.x = 350;
+    this.textLog.y = 730;
     this.textLog.text = "";
     this.textLog.width = 650;
-    this.textLog.height = 350;
+    this.textLog.height = 260;
     this.addChild(this.textLog);
   }
 
@@ -243,12 +239,13 @@ class StartScene extends egret.Sprite implements ChosenEventHandler, CardTapHand
     for(let i = 0; i < this.generalSingleLayouts.length; i++) {
       if(g.number === this.generalSingleLayouts[i].general.number) {
         let left = this.generalSingleLayouts.slice(0, i);
-        let right = this.generalSingleLayouts.slice(i + 1, this.cardPool.generalList.length);
+        let right = this.generalSingleLayouts.slice(i + 1, this.generalSingleLayouts.length);
         let giveUp = this.generalSingleLayouts[i];
         let total = left.concat(right);
         this.generalSingleLayouts = total;
         this.generalSortLayout.removeChild(giveUp);
         this.generalSortLayout.reDrawChildren();
+        console.log(this.generalSingleLayouts);
 
         this.checkCost();
 
@@ -257,7 +254,6 @@ class StartScene extends egret.Sprite implements ChosenEventHandler, CardTapHand
         let r = this.cardPool.generalList.slice(index, this.cardPool.generalList.length);
         let m = [giveUp.general];
         let t = l.concat(m, r);
-        console.log(l, r, m, t);
         this.cardPool.generalList = t;
         this.cardPool.cardIndex = index;
       }
@@ -308,7 +304,7 @@ class StartScene extends egret.Sprite implements ChosenEventHandler, CardTapHand
   private onBtnPowerTap(power: string) {
     this.chosenPower = power;
     this.chosenGenerals = GeneralTable.getGeneralsByPower(power);
-    this.textPower.text = "当前选择势力：" + this.chosenPower + "\n"
+    this.textPower.text = "当前选择势力：" + this.chosenPower + "  "
       + "请安排武将的位置(1-6号)";
     // Refresh cost
     this.remainCost = 16;
@@ -360,6 +356,12 @@ class StartScene extends egret.Sprite implements ChosenEventHandler, CardTapHand
       let gSL = this.generalSingleLayouts[i];
       gSL.disableAllTouchable();
     }
+    this.cardPool.leftBtn.touchEnabled = false;
+    this.cardPool.leftBtn.clickable = false;
+    this.cardPool.rightBtn.touchEnabled = false;
+    this.cardPool.rightBtn.clickable = false;
+    this.cardPool.currentCard.touchEnabled = false;
+    this.cardPool.currentCard.clickable = false;
   }
 
   public enableAllTouchable() {
@@ -386,6 +388,12 @@ class StartScene extends egret.Sprite implements ChosenEventHandler, CardTapHand
       let gSL = this.generalSingleLayouts[i];
       gSL.enableAllTouchable();
     }
+    this.cardPool.leftBtn.touchEnabled = true;
+    this.cardPool.leftBtn.clickable = true;
+    this.cardPool.rightBtn.touchEnabled = true;
+    this.cardPool.rightBtn.clickable = true;
+    this.cardPool.currentCard.touchEnabled = true;
+    this.cardPool.currentCard.clickable = true;
   }
 
   private onSocketOpen(): void {
