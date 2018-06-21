@@ -278,7 +278,7 @@ class GameScene extends egret.Sprite {
       detailText =
         `武将数据
 坐标：(${i + 1}, ${j + 1})
-勇略: ${g.yl}  智谋：${g.zm}  体力：${g.tl}
+勇略: ${g.yl}+${g.extraYl}  智谋：${g.zm}+${g.extraZm}  体力：${g.tl}
 技能：${g.skill.name} - ${g.skill.text}`;
     } else if (type === "hurted") {
       if (j === 0) {
@@ -617,6 +617,12 @@ class GameScene extends egret.Sprite {
       }
     }
 
+    // 弑君：对敌部队攻击伤害+N（N为被攻击部队的COST值）
+    if(operatedG.skill.name === "弑君") {
+      let cost = targetG.cost;
+      finalTl -= cost;
+    }
+
     finalTl = finalTl < 0 ? 0 : finalTl;
     targetG.tl = finalTl;
     targetChess.general = targetG;
@@ -664,14 +670,14 @@ class GameScene extends egret.Sprite {
     this.requestAttackStuff();
   }
 
-  private colorZhenggongStuff() {
+  private colorFriendSkillableStuff(ifSelf: boolean = true) {
     let i = this.operatedIndex[0];
     let j = this.operatedIndex[1];
     let chesses = this.chessBoard.chesses;
     let operatedCamp = chesses[i][j].camp;
     for (let m = 0; m < 6; m++) {
       for (let n = 0; n < 6; n++) {
-        if (m === i && n === j) {
+        if (m === i && n === j && !ifSelf) {
           continue;
         }
         let chess = chesses[m][n];
@@ -948,6 +954,9 @@ class GameScene extends egret.Sprite {
         case "火烧赤壁":
           this.showExtraSkillMenu("火烧赤壁");
           return;
+        case "发明":
+          this.colorFriendSkillableStuff(false);
+          return;
       }
     }
 
@@ -1072,6 +1081,14 @@ class GameScene extends egret.Sprite {
         targetG.hasSkilled = true;
         operatedG.extraYl += targetG.yl + targetG.extraYl;
         operatedG.extraMoveStep += targetG.armsInfo.moveStep + targetG.extraMoveStep;
+        break;
+      case "发明":
+        let originArms = targetG.arms;
+        let originArmsInfo = ArmsInfo.getArmsInfoByName(originArms, targetG.yl);
+        targetG.arms = "器";
+        targetG.armsInfo = ArmsInfo.getArmsInfoByName("器", targetG.yl);
+        targetG.armsInfo["maxTl"] = originArmsInfo["maxTl"];
+        targetChess.general = targetG;
         break;
     }
 
@@ -1689,7 +1706,7 @@ class GameScene extends egret.Sprite {
     }
     // 争功处理
     if (skillZhenggong) {
-      this.colorZhenggongStuff();
+      this.colorFriendSkillableStuff();
     }
   }
 
