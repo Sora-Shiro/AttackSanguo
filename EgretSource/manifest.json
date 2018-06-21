@@ -11,7 +11,7 @@
 	],
 	"game": [
 		"bin-debug/view/VerticalLayout.js",
-		"bin-debug/scene/LoadingScene.js",
+		"bin-debug/scene/StartScene.js",
 		"bin-debug/Main.js",
 		"bin-debug/Utils.js",
 		"bin-debug/model/game/Constant.js",
@@ -22,8 +22,10 @@
 		"bin-debug/model/skill/SkillTable.js",
 		"bin-debug/scene/AboutScene.js",
 		"bin-debug/scene/GameScene.js",
+		"bin-debug/scene/LoadingScene.js",
 		"bin-debug/LoadingUI.js",
-		"bin-debug/scene/StartScene.js",
+		"bin-debug/view/Card.js",
+		"bin-debug/view/CardPool.js",
 		"bin-debug/view/CheckBox.js",
 		"bin-debug/view/Chess.js",
 		"bin-debug/view/ChessBoard.js",
@@ -33,6 +35,7 @@
 		"bin-debug/view/HurtedChessBoard.js",
 		"bin-debug/view/ImgBtn.js",
 		"bin-debug/GameSocket.js",
+		"bin-debug/view/handler/CardTapHandler.js",
 		"bin-debug/view/handler/ChosenEventHandler.js"
 	]
 }

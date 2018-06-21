@@ -1,5 +1,5 @@
 interface ChosenEventHandler {
 
-  handleChosenEvent(currentValue: boolean);
+  handleChosenEvent(g: General);
 
 }

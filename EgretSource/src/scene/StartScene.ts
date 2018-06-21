@@ -1,4 +1,4 @@
-class StartScene extends egret.Sprite implements ChosenEventHandler{
+class StartScene extends egret.Sprite implements ChosenEventHandler, CardTapHandler {
 
   private par: egret.DisplayObjectContainer;
 
@@ -43,25 +43,26 @@ class StartScene extends egret.Sprite implements ChosenEventHandler{
   chosenGenerals: General[];
   generalSortLayout: VerticalLayout;
   generalSingleLayouts: GeneralSingleLayout[];
+  cardPool: CardPool;
 
   textLog: egret.TextField;
 
   private createScene() {
     this.textRoom = new egret.TextField();
     this.textRoom.x = 60;
-    this.textRoom.y = 120;
+    this.textRoom.y = 30;
     this.textRoom.text = "房间号码";
     this.addChild(this.textRoom);
 
     this.inputRoom = new egret.TextField();
-    this.inputRoom.width = 300;
-    this.inputRoom.height = 80;
+    this.inputRoom.width = 200;
+    this.inputRoom.height = 60;
     this.inputRoom.restrict = "0-9 A-Z_a-z";
     this.inputRoom.multiline = false;
     this.inputRoom.type = egret.TextFieldType.INPUT;
     this.inputRoom.verticalAlign = egret.VerticalAlign.MIDDLE;
     this.inputRoom.x = 200;
-    this.inputRoom.y = 100;
+    this.inputRoom.y = this.textRoom.y - 20;
     this.inputRoom.background = true;
     this.inputRoom.backgroundColor = 0xffffff;
     this.inputRoom.textColor = 0x000000;
@@ -70,19 +71,19 @@ class StartScene extends egret.Sprite implements ChosenEventHandler{
 
     this.textName = new egret.TextField();
     this.textName.x = 60;
-    this.textName.y = 220;
+    this.textName.y = this.textRoom.y + 80;
     this.textName.text = "玩家名字";
     this.addChild(this.textName);
 
     this.inputName = new egret.TextField();
-    this.inputName.width = 300;
-    this.inputName.height = 80;
+    this.inputName.width = 200;
+    this.inputName.height = 60;
     this.inputName.restrict = "0-9 A-Z_a-z";
     this.inputName.multiline = false;
     this.inputName.verticalAlign = egret.VerticalAlign.MIDDLE;
     this.inputName.type = egret.TextFieldType.INPUT;
     this.inputName.x = 200;
-    this.inputName.y = 200;
+    this.inputName.y = this.textName.y - 20;
     this.inputName.background = true;
     this.inputName.backgroundColor = 0xffffff;
     this.inputName.textColor = 0x000000;
@@ -91,7 +92,7 @@ class StartScene extends egret.Sprite implements ChosenEventHandler{
 
     let powerLayout = new HorizontalLayout(this.par);
     powerLayout.x = 60;
-    powerLayout.y = 310;
+    powerLayout.y = this.textName.y + 60;
     powerLayout.layoutWidth = 400;
     powerLayout.layoutHeight = 50;
     powerLayout.layoutBgColorAlpha = 0;
@@ -132,28 +133,36 @@ class StartScene extends egret.Sprite implements ChosenEventHandler{
     this.chosenPower = "白";
     this.textPower = new egret.TextField();
     this.textPower.x = 60;
-    this.textPower.y = 390;
+    this.textPower.y = powerLayout.y + 70;
     this.textPower.text = "当前选择势力：" + this.chosenPower + "\n"
       + "请安排武将的位置(1-6号)";
     this.addChild(this.textPower);
 
     this.textCost = new egret.TextField();
     this.textCost.x = 60;
-    this.textCost.y = 460;
+    this.textCost.y = this.textPower.y + 60;
     this.textCost.text = "剩余 Cost：" + this._remainCost;
     this.addChild(this.textCost);
 
     this.chosenGenerals = GeneralTable.getGeneralsByPower("白");
 
+    this.cardPool = new CardPool(this.chosenGenerals);
+    this.cardPool.x = 50;
+    this.cardPool.y = this.textCost.y + 60;
+    this.cardPool.cardTapHandler = this;
+    this.addChild(this.cardPool);
+
     this.generalSortLayout = new VerticalLayout(this.par);
     this.generalSortLayout.x = 60;
-    this.generalSortLayout.y = 540;
+    this.generalSortLayout.y = this.cardPool.y + 60;
     this.generalSortLayout.layoutWidth = 400;
     this.generalSortLayout.layoutHeight = 100;
     this.generalSortLayout.layoutBgColorAlpha = 0;
     this.generalSortLayout.layoutSpacing = 8;
     this.addChild(this.generalSortLayout);
     this.setGeneralSortLayout();
+
+
 
     this.btnConnect = new ImgBtn(this, 350, 120);
     this.btnConnect.text = "连接";
@@ -200,24 +209,77 @@ class StartScene extends egret.Sprite implements ChosenEventHandler{
     }
   }
 
+  public handleCardTapEvent(card: Card) {
+    let gSL = new GeneralSingleLayout(this, card.general, "0");
+    gSL.eventHandler = this;
+    this.generalSingleLayouts.push(gSL);
+    this.generalSortLayout.addLayoutChild(gSL);
+
+    this.checkCost();
+
+    let left = this.cardPool.generalList.slice(0, this.cardPool.cardIndex);
+    let right = this.cardPool.generalList.slice(this.cardPool.cardIndex + 1, this.cardPool.generalList.length);
+    let total = left.concat(right);
+    let index = this.cardPool.cardIndex;
+    this.cardPool.generalList = total;
+    this.cardPool.cardIndex = index - 1 < 0 ? index : index - 1;
+  }
+
+  private 
+
   private setGeneralSortLayout() {
     let generals = this.chosenGenerals;
     this.generalSingleLayouts = [];
     this.generalSortLayout.removeChildren();
-    let i = 0;
-    let pos = -1;
-    for (; i < generals.length; i++) {
-      if (pos <= 6) {
-        pos += 1;
-      }
-      let g = generals[i];
-      let gSL = new GeneralSingleLayout(this, g, pos.toString());
-      gSL.eventHandler = this;
-      this.generalSingleLayouts.push(gSL);
-      this.generalSortLayout.addLayoutChild(gSL);
-    }
-    // this.generalSortLayout.reDrawChildren();
+
+    this.cardPool.generalList = generals;
   }
+
+  public handleChosenEvent(g: General) {
+    this.removeChosenGeneral(g);
+  }
+
+  private removeChosenGeneral(g: General) {
+    for(let i = 0; i < this.generalSingleLayouts.length; i++) {
+      if(g.number === this.generalSingleLayouts[i].general.number) {
+        let left = this.generalSingleLayouts.slice(0, i);
+        let right = this.generalSingleLayouts.slice(i + 1, this.cardPool.generalList.length);
+        let giveUp = this.generalSingleLayouts[i];
+        let total = left.concat(right);
+        this.generalSingleLayouts = total;
+        this.generalSortLayout.removeChild(giveUp);
+        this.generalSortLayout.reDrawChildren();
+
+        this.checkCost();
+
+        let index = this.cardPool.cardIndex;
+        let l = this.cardPool.generalList.slice(0, index);
+        let r = this.cardPool.generalList.slice(index, this.cardPool.generalList.length);
+        let m = [giveUp.general];
+        let t = l.concat(m, r);
+        console.log(l, r, m, t);
+        this.cardPool.generalList = t;
+        this.cardPool.cardIndex = index;
+      }
+    }
+  }
+
+  private checkCost() {
+    let usedCost = 0;
+    for (let i = 0; i < this.generalSingleLayouts.length; i++) {
+      let gSL = this.generalSingleLayouts[i];
+      usedCost += gSL.general.cost;
+    }
+    this.remainCost = this.totalCost - usedCost;
+    if (this.remainCost < 0) {
+      this.btnConnect.touchEnabled = false;
+      this.btnConnect.clickable = false;
+    } else {
+      this.btnConnect.touchEnabled = true;
+      this.btnConnect.clickable = true;
+    }
+  }
+
 
   private onBtnBaiTap() {
     this.onBtnPowerTap("白");
@@ -257,8 +319,8 @@ class StartScene extends egret.Sprite implements ChosenEventHandler{
   private onBtnConnectTap() {
     this.disableAllTouchable();
     this.appendLog("连接服务器中");
-    let url = Constant.LOCAL_SERVER_IP;
-    let port = Constant.LOCAL_SERVER_PORT;
+    let url = Constant.REMOTE_SERVER_IP;
+    let port = Constant.REMOTE_SERVER_PORT;
     if (this.socket && this.socket.connected) {
       this.socket.close();
     }
@@ -331,43 +393,19 @@ class StartScene extends egret.Sprite implements ChosenEventHandler{
     this.sendChosenData();
   }
 
-  public handleChosenEvent(currentValue: boolean) {
-    this.checkCost();
-  }
-
-  private checkCost() {
-    let usedCost = 0;
-    for(let i = 0; i < this.generalSingleLayouts.length; i++) {
-      let gSL = this.generalSingleLayouts[i];
-      if (gSL.chosen) {
-        usedCost += gSL.general.cost;
-      }
-    }
-    this.remainCost = this.totalCost - usedCost;
-    if(this.remainCost < 0) {
-      this.btnConnect.touchEnabled = false;
-      this.btnConnect.clickable = false;
-    } else {
-      this.btnConnect.touchEnabled = true;
-      this.btnConnect.clickable = true;
-    }
-  }
-
+  
   private sendChosenData() {
     let roomName = this.inputRoom.text;
     let userName = this.inputName.text;
 
     let gDetail = [];
-    for(let i = 0; i < this.generalSingleLayouts.length; i++) {
+    for (let i = 0; i < this.generalSingleLayouts.length; i++) {
       let gSL = this.generalSingleLayouts[i];
-      let selected = gSL.chosen;
-      if (selected) {
-        let data = {
-          "num": gSL.general.number,
-          "pos": gSL.pos
-        };
-        gDetail.push(data);
-      }
+      let data = {
+        "num": gSL.general.number,
+        "pos": gSL.pos
+      };
+      gDetail.push(data);
     }
 
     let data = JSON.stringify({

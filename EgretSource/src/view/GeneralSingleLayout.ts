@@ -1,6 +1,6 @@
 class GeneralSingleLayout extends egret.Sprite {
 
-  private chosenView: CheckBox;
+  private cancelBtn: ImgBtn;
   private gName: egret.TextField;
   private gPos: egret.TextField;
   private gCos: egret.TextField;
@@ -25,15 +25,6 @@ class GeneralSingleLayout extends egret.Sprite {
   public set pos(v: string) {
     this._pos = v;
     this.gPos.text = this._pos;
-  }
-
-  private _chosen: boolean;
-  public get chosen(): boolean {
-    return this._chosen;
-  }
-  public set chosen(v: boolean) {
-    this._chosen = v;
-    this.chosenView.selected = this._chosen;
   }
 
   private _layoutWidth: number;
@@ -114,7 +105,6 @@ class GeneralSingleLayout extends egret.Sprite {
     this._layoutPaddingTop = 0;
     this._layoutPaddingLeft = 0;
     this._general = general;
-    this._chosen = false;
     this._pos = pos;
     this.reDraw();
   }
@@ -124,10 +114,11 @@ class GeneralSingleLayout extends egret.Sprite {
     this.graphics.beginFill(this._layoutBgColor, this._layoutBgColorAlpha);
     this.graphics.drawRect(0, 0, this._layoutWidth, this._layoutHeight);
     this.graphics.endFill();
-    this.chosenView = new CheckBox(this, 50, 50);
-    this.chosenView.textY = 10;
-    this.chosenView.addEventListener("touchTap", this.chosenEvent, this);
-    this.addLayoutChild(this.chosenView);
+    this.cancelBtn = new ImgBtn(this, 50, 50);
+    this.cancelBtn.textY = 10;
+    this.cancelBtn.text = "X";
+    this.cancelBtn.addEventListener("touchTap", this.chosenEvent, this);
+    this.addLayoutChild(this.cancelBtn);
     this.gName = new egret.TextField();
     this.gName.text = this.general.name;
     this.gName.y = 10;
@@ -152,11 +143,8 @@ class GeneralSingleLayout extends egret.Sprite {
   }
 
   private chosenEvent(evt: egret.Event) {
-    let s = !this.chosenView.selected;
-    this.chosenView.selected = s;
-    this.chosen = s;
     if(this._chosenEventHandler) {
-      this._chosenEventHandler.handleChosenEvent(this.chosen);
+      this._chosenEventHandler.handleChosenEvent(this._general);
     }
   }
 
