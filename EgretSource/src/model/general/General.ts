@@ -20,6 +20,7 @@ class General {
   hasAttacked: boolean;
   hasSkilled: boolean;
   hurtTurns: number;
+  usedMoveStep: number;
 
   extraYl: number;
   extraZm: number;

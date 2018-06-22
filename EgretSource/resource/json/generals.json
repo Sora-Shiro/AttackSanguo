@@ -432,5 +432,19 @@
     "mei": false,
     "skill": "发明",
     "cost": 3
+  },
+  "32": {
+    "number": 32,
+    "name": "陈泰",
+    "power": "晋",
+    "rare": "SR",
+    "yl": 7,
+    "zm": 7,
+    "arms": "骑",
+    "yong": false,
+    "fu": false,
+    "mei": false,
+    "skill": "以逸待劳",
+    "cost": 4
   }
 }

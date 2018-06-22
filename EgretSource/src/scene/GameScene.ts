@@ -415,8 +415,14 @@ class GameScene extends egret.Sprite {
       return;
     }
 
+    // 计算行走步数
+    let deltaX = Math.abs(j - n);
+    let deltaY = Math.abs(i - m);
+    let usedMove = deltaX + deltaY;
+
     let operatedChess: Chess = this.chessBoard.chesses[i][j];
     let g: General = operatedChess.general;
+    g.usedMoveStep = usedMove;
     g.hasMoved = true;
     let targetChess: Chess = this.chessBoard.chesses[m][n];
     let tG: General = targetChess.general;
@@ -621,6 +627,12 @@ class GameScene extends egret.Sprite {
     if(operatedG.skill.name === "弑君") {
       let cost = targetG.cost;
       finalTl -= cost;
+    }
+
+    // 以逸待劳：对敌部队造成的伤害+3N（N为本部队剩余机动）
+    if(operatedG.skill.name === "以逸待劳") {
+      let remainStep = operatedG.extraMoveStep + operatedG.armsInfo.moveStep - operatedG.usedMoveStep;
+      finalTl -= remainStep * 3;
     }
 
     finalTl = finalTl < 0 ? 0 : finalTl;
@@ -1096,6 +1108,8 @@ class GameScene extends egret.Sprite {
     operatedChess.general = operatedG;
 
     this.extraSkillMessage = {};
+
+    this.clearChessesStatus();
   }
 
   // 偷渡阴平 处理
@@ -1724,7 +1738,10 @@ class GameScene extends egret.Sprite {
           g.extraMoveStep = 0;
           g.extraAtkRange = 0;
           g.hasMoved = false;
+          g.hasAttacked = false;
+          g.hasSkilled = false;
           g.canPenetrate = false;
+          g.usedMoveStep = 0;
           g.extraMessage = {};
           let untilDieMessage = g.untilDieMessage;
           if (untilDieMessage["天弓"]) {
