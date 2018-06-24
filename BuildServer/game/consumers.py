@@ -330,8 +330,8 @@ def start_game(room_name):
             g = GeneralTable[str(num)]
             if g["mei"]:
                 room["upWall"] += 5
-            up_chesses.pop(pos - 1)
-            up_chesses.insert(pos - 1, {"g": g, "camp": -1})
+            up_chesses.pop(pos)
+            up_chesses.insert(pos, {"g": g, "camp": -1})
         down_chesses = [
             {"g": None, "camp": 0},
             {"g": None, "camp": 0},
@@ -346,8 +346,8 @@ def start_game(room_name):
             g = GeneralTable[str(num)]
             if g["mei"]:
                 room["downWall"] += 5
-            down_chesses.pop(pos - 1)
-            down_chesses.insert(pos - 1, {"g": g, "camp": 1})
+            down_chesses.pop(pos)
+            down_chesses.insert(pos, {"g": g, "camp": 1})
         room["chesses"].append(up_chesses)
         for i in range(4):
             room["chesses"].append([
