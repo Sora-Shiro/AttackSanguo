@@ -446,5 +446,33 @@
     "mei": false,
     "skill": "以逸待劳",
     "cost": 4
+  },
+  "33": {
+    "number": 33,
+    "name": "司马昭",
+    "power": "晋",
+    "rare": "SR",
+    "yl": 7,
+    "zm": 9,
+    "arms": "骑",
+    "yong": false,
+    "fu": false,
+    "mei": false,
+    "skill": "昭心若揭",
+    "cost": 5
+  },
+  "34": {
+    "number": 34,
+    "name": "杜预",
+    "power": "晋",
+    "rare": "SR",
+    "yl": 7,
+    "zm": 9,
+    "arms": "骑",
+    "yong": false,
+    "fu": false,
+    "mei": false,
+    "skill": "势如破竹",
+    "cost": 5
   }
 }
