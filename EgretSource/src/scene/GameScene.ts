@@ -106,29 +106,35 @@ class GameScene extends egret.Sprite {
     let chesses = this.chessBoard.chesses;
     for (let i = 0; i < 6; i++) {
       let upChess = chesses[0][i];
-      if (upChess.general && upChess.general.mei) {
+      if (upChess.general) {
+        if (upChess.general.mei) {
+          this.upWall += 5;
+        }
+        if (upChess.general.skill.name === "伪帝编制") {
+          for (let j = 0; j < 6; j++) {
+            let chess = chesses[0][j];
+            if (chess.general) {
+              let g = chess.general;
+              g.tl += 12;
+              chess.general = g;
+            }
+          }
+        }
         this.upWall += 5;
       }
       let downChess = chesses[5][i];
-      if (downChess.general && downChess.general.mei) {
-        this.downWall += 5;
-      }
-      if (upChess.general.skill.name === "伪帝编制") {
-        for (let j = 0; j < 6; j++) {
-          let chess = chesses[0][j];
-          if (chess.general) {
-            let g = chess.general;
-            g.tl += 12;
-            chess.general = g;
-          }
+      if (downChess.general) {
+        if (downChess.general.mei) {
+          this.downWall += 5;
         }
-      } else if (downChess.general.skill.name === "伪帝编制") {
-        for (let j = 0; j < 6; j++) {
-          let chess = chesses[5][j];
-          if (chess.general) {
-            let g = chess.general;
-            g.tl += 12;
-            chess.general = g;
+        if (downChess.general.skill.name === "伪帝编制") {
+          for (let j = 0; j < 6; j++) {
+            let chess = chesses[5][j];
+            if (chess.general) {
+              let g = chess.general;
+              g.tl += 12;
+              chess.general = g;
+            }
           }
         }
       }
@@ -1275,7 +1281,7 @@ class GameScene extends egret.Sprite {
               break;
             }
           }
-          if(ifNearFriend) {
+          if (ifNearFriend) {
             dZm += 10;
           }
           g.tl -= dZm;

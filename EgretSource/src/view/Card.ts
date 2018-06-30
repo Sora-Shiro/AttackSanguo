@@ -76,8 +76,8 @@ class Card extends egret.Sprite {
     detailText.width = 360;
     detailText.height = 400;
     detailText.size = 35;
-    detailText.text = this._general.skill.name + "  " + this._general.skill.type + "  Cost:"
-      + this._general.skill.cost + "\n" + this._general.skill.text;
+    detailText.text = this._general.skill.name + "  " + this._general.skill.type + "  ( "
+      + this._general.skill.cost + " )\n" + this._general.skill.text;
     this.addChild(detailText);
   }
 }
