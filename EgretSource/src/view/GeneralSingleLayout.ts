@@ -20,7 +20,7 @@ class GeneralSingleLayout extends egret.Sprite {
 
   private _pos: string;
   public get pos(): string {
-    return this._pos;
+    return this.gPos.text;
   }
   public set pos(v: string) {
     this._pos = v;
@@ -130,7 +130,7 @@ class GeneralSingleLayout extends egret.Sprite {
     this.gPos = new egret.TextField();
     this.gPos.width = 50;
     this.gPos.y = 10;
-    this.gPos.restrict = "1-6";
+    this.gPos.restrict = "0-5";
     this.gPos.text = this._pos;
     this.gPos.multiline = false;
     this.gPos.verticalAlign = egret.VerticalAlign.MIDDLE;

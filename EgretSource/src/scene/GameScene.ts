@@ -113,6 +113,25 @@ class GameScene extends egret.Sprite {
       if (downChess.general && downChess.general.mei) {
         this.downWall += 5;
       }
+      if (upChess.general.skill.name === "伪帝编制") {
+        for (let j = 0; j < 6; j++) {
+          let chess = chesses[0][j];
+          if (chess.general) {
+            let g = chess.general;
+            g.tl += 12;
+            chess.general = g;
+          }
+        }
+      } else if (downChess.general.skill.name === "伪帝编制") {
+        for (let j = 0; j < 6; j++) {
+          let chess = chesses[5][j];
+          if (chess.general) {
+            let g = chess.general;
+            g.tl += 12;
+            chess.general = g;
+          }
+        }
+      }
     }
   }
 
@@ -201,8 +220,8 @@ class GameScene extends egret.Sprite {
     skillEnable = skillEnable && (morale >= Number(g.skill.cost));
     if (g.skill.name === "天雷") {
       skillEnable = skillEnable && this.checkTianLeiAvailable();
-    } else if (g.skill.name === "偷渡阴平") {
-      skillEnable = skillEnable && this.checkTDYPAvailable();
+    } else if (g.skill.name === "阴平奇袭") {
+      skillEnable = skillEnable && this.checkYPQXAvailable();
     }
     this.skillBtn.touchEnabled = skillEnable;
     this.skillBtn.clickable = skillEnable;
@@ -313,7 +332,7 @@ class GameScene extends egret.Sprite {
 
   // 移动
   private requestColorMoveStuff() {
-    if(this._waitingResponse) {
+    if (this._waitingResponse) {
       return;
     }
 
@@ -391,7 +410,7 @@ class GameScene extends egret.Sprite {
   }
 
   private requestMoveStuff() {
-    if(this._waitingResponse) {
+    if (this._waitingResponse) {
       return;
     }
 
@@ -440,7 +459,7 @@ class GameScene extends egret.Sprite {
 
   // 攻击
   private requestColorAttackStuff() {
-    if(this._waitingResponse) {
+    if (this._waitingResponse) {
       return;
     }
 
@@ -468,40 +487,68 @@ class GameScene extends egret.Sprite {
     let armsInfo = g.armsInfo;
     let range = armsInfo.attackRange;
     let finalRange = range + g.extraAtkRange;
-    if (g.untilDieMessage["天弓"]) {
+    if (g.extraMessage["attackTarget"]) {
+      this.colorAttackTarget(g.extraMessage["attackTarget"]);
+    }
+    else if (g.untilDieMessage["天弓"]) {
       this.colorAllAtkableChess();
     } else {
       this.colorAttackableChess(finalRange, i, j);
     }
   }
 
-  private colorAttackableChess(range: number, i: number, j: number) {
+  private colorAttackTarget(general: General) {
+    let i = this.operatedIndex[0];
+    let j = this.operatedIndex[1];
+    let chesses = this.chessBoard.chesses;
+    let operatedCamp = chesses[i][j].camp;
+    let targetCamp = operatedCamp === 1 ? -1 : 1;
+    for (let m = 0; m < 6; m++) {
+      for (let n = 0; n < 6; n++) {
+        let chess = chesses[m][n];
+        let camp = chess.camp;
+        if (camp === targetCamp && chess.general === general) {
+          chess[m][n].status = "attackable";
+        }
+      }
+    }
+  }
+
+  private colorChesses(range: number, i: number, j: number, status: string) {
     if (range <= 0) return;
     let chesses = this.chessBoard.chesses;
     if (i + 1 < chesses.length) {
       if (chesses[i + 1][j].camp !== this.playerCamp) {
-        chesses[i + 1][j].status = "attackable";
+        chesses[i + 1][j].status = status;
       }
       this.colorAttackableChess(range - 1, i + 1, j);
     }
     if (i - 1 >= 0) {
       if (chesses[i - 1][j].camp !== this.playerCamp) {
-        chesses[i - 1][j].status = "attackable";
+        chesses[i - 1][j].status = status;
       }
       this.colorAttackableChess(range - 1, i - 1, j);
     }
     if (j + 1 < chesses[0].length) {
       if (chesses[i][j + 1].camp !== this.playerCamp) {
-        chesses[i][j + 1].status = "attackable";
+        chesses[i][j + 1].status = status;
       }
       this.colorAttackableChess(range - 1, i, j + 1);
     }
     if (j - 1 >= 0) {
       if (chesses[i][j - 1].camp !== this.playerCamp) {
-        chesses[i][j - 1].status = "attackable";
+        chesses[i][j - 1].status = status;
       }
       this.colorAttackableChess(range - 1, i, j - 1);
     }
+  }
+
+  private colorAttackableChess(range: number, i: number, j: number) {
+    this.colorChesses(range, i, j, "attackable");
+  }
+
+  private colorNormalSkillableChess(range: number, i: number, j: number) {
+    this.colorChesses(range, i, j, "skillable");
   }
 
   private colorAllAtkableChess() {
@@ -522,7 +569,7 @@ class GameScene extends egret.Sprite {
   }
 
   private requestAttackStuff() {
-    if(this._waitingResponse) {
+    if (this._waitingResponse) {
       return;
     }
 
@@ -561,6 +608,29 @@ class GameScene extends egret.Sprite {
       return;
     }
 
+    let phyHurt = 0;
+
+    // 发动 壮士断腕 后，攻击九宫格内所有敌人
+    if (operatedG.skill.name === "壮士断腕" && operatedG.hasSkilled) {
+      for (let a = i - 1; a <= i + 1; a++) {
+        for (let b = j - 1; b <= j + 1; b++) {
+          let chess = this.chessBoard.chesses[a][b];
+          let camp = chess.camp;
+          if (camp === -operatedChess.camp) {
+            let atk = operatedG.yl;
+            let finalAtk = atk + operatedG.extraYl;
+            let targetTl = targetG.tl;
+            let phyHurt = finalAtk;
+            let g = chess.general;
+            g.tl -= phyHurt;
+            chess.general = g;
+            this.checkAlive(a, b);
+          }
+        }
+        return;
+      }
+    }
+
     // 攻击时相邻触发技能（暂时只有 勇）
     if ((this.currentAtkSkill.name === "No") && !this.atkSkillMenu.visible) {
       let ifAdjacent = Utils.is2dAdjacent(i, j, m, n);
@@ -573,69 +643,80 @@ class GameScene extends egret.Sprite {
     let atk = operatedG.yl;
     let finalAtk = atk + operatedG.extraYl;
     let targetTl = targetG.tl;
-    let decreaseTl = finalAtk;
+    phyHurt += finalAtk;
 
     // 伏 额外伤害处理
-    let fuDecreaseTl = 0;
+    let magHurt = 0;
     if (operatedG.fu) {
       let dZm = operatedG.zm - targetG.zm;
       if (dZm < 0) dZm = 0;
       dZm *= 2;
       dZm += 3;
-      fuDecreaseTl = dZm;
+      magHurt += dZm;
       operatedG.fu = false;
       operatedChess.general = operatedG;
     }
-    let finalDecrease = decreaseTl + fuDecreaseTl;
     // 伏兵 处理
     if (operatedG.extraMessage["伏兵"]) {
       let dZm = operatedG.zm - targetG.zm;
       if (dZm < 0) dZm = 0;
       dZm *= 3;
       dZm += 10;
-      finalDecrease += dZm;
+      magHurt += dZm;
     }
     // 武侯军阵 处理
     if (operatedG.extraMessage["武侯军阵"]) {
       let dZm = operatedG.zm - targetG.zm;
       if (dZm < 0) dZm = 0;
-      finalDecrease += dZm;
+      magHurt += dZm;
     }
 
-    let finalTl = targetTl - finalDecrease;
-
     // 额外伤害
-    if(operatedG.extraMessage["extraDamage"]) {
-      finalTl -= operatedG.extraMessage["extraDamage"];
+    if (operatedG.extraMessage["extraDamage"]) {
+      phyHurt += operatedG.extraMessage["extraDamage"];
     }
 
     // 小霸王：攻击附带谋略差伤害
-    if(operatedG.skill.name === "小霸王") {
+    if (operatedG.skill.name === "小霸王") {
       let dZm = operatedG.zm - targetG.zm;
       if (dZm < 0) dZm = 0;
-      finalTl -= dZm;
+      magHurt += dZm;
     }
 
     // 万弩齐张：骑兵额外伤害
-    if(operatedG.extraMessage["extraDamageToQiBin"]) {
-      if(targetG.arms === "骑") {
-        finalTl -= 5;
+    if (operatedG.extraMessage["extraDamageToQiBin"]) {
+      if (targetG.arms === "骑") {
+        phyHurt += 5;
       }
     }
 
     // 弑君：对敌部队攻击伤害+N（N为被攻击部队的COST值）
-    if(operatedG.skill.name === "弑君") {
+    if (operatedG.skill.name === "弑君") {
       let cost = targetG.cost;
-      finalTl -= cost;
+      phyHurt += cost;
     }
 
     // 以逸待劳：对敌部队造成的伤害+3N（N为本部队剩余机动）
-    if(operatedG.skill.name === "以逸待劳") {
+    if (operatedG.skill.name === "以逸待劳") {
       let remainStep = operatedG.extraMoveStep + operatedG.armsInfo.moveStep - operatedG.usedMoveStep;
-      finalTl -= remainStep * 3;
+      phyHurt += remainStep * 3;
     }
 
-    finalTl = finalTl < 0 ? 0 : finalTl;
+    // 势如破竹
+    if (operatedG.extraMessage["势如破竹"]) {
+      let dZm = operatedG.tl;
+      magHurt += dZm;
+    }
+
+    // 苦肉
+    if (operatedG.extraMessage["苦肉"] && this.isNeighbor(i, j, m, n)) {
+      phyHurt += operatedG.extraMessage["苦肉"];
+    }
+
+    let finalTl = targetTl - (phyHurt + magHurt);
+    if (finalTl < 0) {
+      finalTl = 0;
+    }
     targetG.tl = finalTl;
     targetChess.general = targetG;
     let alive = this.checkAlive(m, n);
@@ -665,6 +746,20 @@ class GameScene extends egret.Sprite {
     this.currentAtkSkill = new Skill();
 
     this.clearChessesStatus();
+  }
+
+  private isNeighbor(i: number, j: number, m: number, n: number) {
+    let result = false;
+    if (i === m && j === n - 1) {
+      result = true;
+    } else if (i === m && j === n + 1) {
+      result = true;
+    } else if (i === m - 1 && j === n) {
+      result = true;
+    } else if (i === m + 1 && j === n) {
+      result = true;
+    }
+    return result;
   }
 
   private operateAtkSkillCancel() {
@@ -705,6 +800,9 @@ class GameScene extends egret.Sprite {
     let chess: Chess = this.chessBoard.chesses[i][j];
     let g: General = chess.general;
     if (g.tl <= 0) {
+      if (g.skill.name === "伪帝编制") {
+        this.operateGameOverStuff(-chess.camp);
+      }
       // 伏 死亡失效
       g.fu = false;
       // 默认伤兵计时为 3
@@ -745,11 +843,11 @@ class GameScene extends egret.Sprite {
         }
       }
       // 被击败的话，对方增加士气，但一回合只能一次
-      if(defeated && !this.hasAddMorale) {
-        let addCamp = -chess.camp;
-        if(addCamp === 1) {
+      if (defeated && !this.hasAddMorale) {
+        let addCamp = this.currentCamp;
+        if (addCamp === 1) {
           this.downMorale += 1;
-        } else if(addCamp === -1) {
+        } else if (addCamp === -1) {
           this.upMorale += 1;
         }
         this.hasAddMorale = true;
@@ -762,7 +860,7 @@ class GameScene extends egret.Sprite {
 
   // 伤兵区
   private requestColorRevivalStuff() {
-    if(this._waitingResponse) {
+    if (this._waitingResponse) {
       return;
     }
 
@@ -850,7 +948,7 @@ class GameScene extends egret.Sprite {
   }
 
   private requestRevivalStuff() {
-    if(this._waitingResponse) {
+    if (this._waitingResponse) {
       return;
     }
 
@@ -890,7 +988,7 @@ class GameScene extends egret.Sprite {
 
   // 攻击城墙
   private requestAtkWallStuff() {
-    if(this._waitingResponse) {
+    if (this._waitingResponse) {
       return;
     }
 
@@ -941,12 +1039,12 @@ class GameScene extends egret.Sprite {
   extraSkillMessage: any = {};
   // 使用技能
   private requestSkillStuff() {
-    if(this._waitingResponse) {
+    if (this._waitingResponse) {
       return;
     }
 
     this.requestWaitStart();
-    
+
     let m = this.targetIndex[0];
     let n = this.targetIndex[1];
     let i = this.operatedIndex[0];
@@ -968,6 +1066,9 @@ class GameScene extends egret.Sprite {
           return;
         case "发明":
           this.colorFriendSkillableStuff(false);
+          return;
+        case "黄天当立":
+          this.colorNormalSkillableChess(2, i, j);
           return;
       }
     }
@@ -1070,8 +1171,8 @@ class GameScene extends egret.Sprite {
         this.changeExtraToGenerals(operatedCamp, "all", 3, 0, 0, 0, {});
         this.changeExtraToGenerals(-operatedCamp, "all", 0, 0, 0, 0, { "addHurtTurns": 1 });
         break;
-      case "偷渡阴平":
-        this.operateTDYPSkill();
+      case "阴平奇袭":
+        this.operateYPQXSkill();
         operatedG.skill.onceUsed = true;
         break;
       case "三分归晋":
@@ -1080,7 +1181,7 @@ class GameScene extends egret.Sprite {
       case "万弩齐张":
         operatedG.extraYl += 8;
         operatedG.extraAtkRange += 1;
-        if(operatedG.extraMessage["extraDamageToQiBin"]) {
+        if (operatedG.extraMessage["extraDamageToQiBin"]) {
           operatedG.extraMessage["extraDamageToQiBin"] += 5;
         } else {
           operatedG.extraMessage["extraDamageToQiBin"] = 5;
@@ -1102,6 +1203,38 @@ class GameScene extends egret.Sprite {
         targetG.armsInfo["maxTl"] = originArmsInfo["maxTl"];
         targetChess.general = targetG;
         break;
+      case "昭心若揭":
+        this.changeExtraToGenerals(operatedCamp, "all", 3, 0, 0, 0, {});
+        operatedG.tl += 10;
+        this.changeExtraToGenerals(-operatedCamp, "all", 0, 0, 0, 0, { "attackTarget": operatedChess.general });
+        break;
+      case "势如破竹":
+        operatedG.extraMessage["势如破竹"] = true;
+        break;
+      case "黄天当立":
+        targetG.tl -= 999;
+        if (targetG.tl < 0) {
+          targetG.tl = 0;
+        }
+        targetChess.general = targetG;
+        this.checkAlive(m, n);
+        break;
+      case "壮士断腕":
+        operatedG.extraYl += 8;
+        operatedChess.general = operatedG;
+        break;
+      case "苦肉":
+        let currentTl = operatedG.tl;
+        operatedG.tl = 1;
+        operatedG.extraMessage["苦肉"] = currentTl - 1;
+        operatedChess.general = operatedG;
+        break;
+      case "弓兵齐射":
+        this.changeExtraToGenerals(operatedCamp, "弓", 2, 0, 1, 0, {});
+        break;
+      case "夷陵烽火":
+        this.operateYLFHSkill(i, j);
+        break;
     }
 
     operatedG.hasSkilled = true;
@@ -1112,8 +1245,48 @@ class GameScene extends egret.Sprite {
     this.clearChessesStatus();
   }
 
+  private operateYLFHSkill(operatedI: number, operatedJ: number) {
+    let c = this.chessBoard.chesses;
+    let operatedChess = c[operatedI][operatedJ];
+    let operatedG = operatedChess.general;
+    let operatedCamp = operatedChess.camp;
+    let targetCamp = -operatedCamp;
+    let operatedZm = operatedG.zm + operatedG.extraZm;
+    for (let i = 0; i < c.length; i++) {
+      for (let j = 0; j < c[i].length; j++) {
+        let chess = c[i][j];
+        if (chess.camp === targetCamp) {
+          let g = chess.general;
+          let targetZm = g.zm + g.extraZm;
+          let dZm = operatedZm - targetZm;
+          if (dZm < 0) {
+            dZm = 0;
+          }
+          let ifNearFriend = false;
+          for (let x = i - 1; x <= i + 1; x++) {
+            for (let y = j - 1; y <= j + 1; y++) {
+              let nearChess = c[x][y];
+              if (nearChess.camp === targetCamp) {
+                ifNearFriend = true;
+                break;
+              }
+            }
+            if (ifNearFriend) {
+              break;
+            }
+          }
+          if(ifNearFriend) {
+            dZm += 10;
+          }
+          g.tl -= dZm;
+          this.checkAlive(i, j);
+        }
+      }
+    }
+  }
+
   // 偷渡阴平 处理
-  private operateTDYPSkill() {
+  private operateYPQXSkill() {
     let a = this.operatedIndex[0];
     let b = this.operatedIndex[1];
     let operatedChess: Chess = this.chessBoard.chesses[a][b];
@@ -1128,7 +1301,7 @@ class GameScene extends egret.Sprite {
   }
 
   // 检测 偷渡阴平 可行性
-  private checkTDYPAvailable(): boolean {
+  private checkYPQXAvailable(): boolean {
     let a = this.operatedIndex[0];
     let b = this.operatedIndex[1];
     let operatedChess: Chess = this.chessBoard.chesses[a][b];
@@ -1176,7 +1349,7 @@ class GameScene extends egret.Sprite {
       let finalTl = targetG.tl - dZm;
 
       // 额外伤害
-      if(operatedG.extraMessage["extraDamage"]) {
+      if (operatedG.extraMessage["extraDamage"]) {
         finalTl -= operatedG.extraMessage["extraDamage"];
       }
 
@@ -1197,7 +1370,7 @@ class GameScene extends egret.Sprite {
         let finalTl = targetG.tl - dZm;
 
         // 额外伤害
-        if(operatedG.extraMessage["extraDamage"]) {
+        if (operatedG.extraMessage["extraDamage"]) {
           finalTl -= operatedG.extraMessage["extraDamage"];
         }
 
@@ -1275,7 +1448,7 @@ class GameScene extends egret.Sprite {
       let finalTl = targetG.tl - dZm;
 
       // 额外伤害
-      if(operatedG.extraMessage["extraDamage"]) {
+      if (operatedG.extraMessage["extraDamage"]) {
         finalTl -= operatedG.extraMessage["extraDamage"];
       }
 
@@ -1448,9 +1621,9 @@ class GameScene extends egret.Sprite {
       dZm *= 2;
       dZm += 10;
       let finalTl = targetG.tl - dZm;
-      
+
       // 额外伤害
-      if(operatedG.extraMessage["extraDamage"]) {
+      if (operatedG.extraMessage["extraDamage"]) {
         finalTl -= operatedG.extraMessage["extraDamage"];
       }
 
@@ -1609,7 +1782,7 @@ class GameScene extends egret.Sprite {
                 case "decreaseTl":
                   g.tl -= message[key];
                 default:
-                  if(key in g.extraMessage) {
+                  if (key in g.extraMessage) {
                     g.extraMessage[key] += message[key];
                   } else {
                     g.extraMessage[key] = message[key];
@@ -1650,8 +1823,8 @@ class GameScene extends egret.Sprite {
       });
       this.socket.writeUTF(data);
     } else {
-      this.beginTurnEndStuff(-this.currentCamp);
-      this.beginTurnStartStuff(this.currentCamp);
+      this.beginTurnEndStuff(this.currentCamp);
+      this.beginTurnStartStuff(-this.currentCamp);
     }
   }
 
@@ -1691,9 +1864,7 @@ class GameScene extends egret.Sprite {
         let chess = this.chessBoard.chesses[i][j];
         if (chess.camp === this.currentCamp) {
           let g = chess.general;
-          g.hasMoved = false;
-          g.hasAttacked = false;
-          switch(g.skill.name) {
+          switch (g.skill.name) {
             case "魏之元勋":
               this.changeExtraToGenerals(this.currentCamp, "all", 0, 0, 0, 0, { "extraDamage": 4 });
               break;
@@ -1702,6 +1873,22 @@ class GameScene extends egret.Sprite {
               break;
             case "争功":
               skillZhenggong = true;
+              break;
+            case "恃勇":
+              g.tl -= 3;
+              chess.general = g;
+              this.checkAlive(i, j, false);
+              break;
+            case "白马义从":
+              g.extraAtkRange += 2;
+              chess.general = g;
+              break;
+          }
+        } else if (chess.general) {
+          let g = chess.general;
+          switch (g.skill.name) {
+            case "倾国之色":
+              this.changeExtraToGenerals(-this.currentCamp, "all", 0, -1, 0, 0, {});
               break;
           }
         }
@@ -1713,6 +1900,7 @@ class GameScene extends egret.Sprite {
     } else {
       this.downMorale++;
     }
+    // 本回合首次击败标记
     this.hasAddMorale = false;
     // 回合结束按钮可见
     if ((this.playerCamp === this.currentCamp)) {
@@ -1727,12 +1915,12 @@ class GameScene extends egret.Sprite {
   private turnEndStuff() {
     // 清除棋子状态
     this.clearChessesStatus();
-    // 清除武将本回合加成
+    // 清除本方武将本回合加成
     for (let i = 0; i < 6; i++) {
       for (let j = 0; j < 6; j++) {
         let chess = this.chessBoard.chesses[i][j];
         let g = chess.general;
-        if (g) {
+        if (g && chess.camp === this.currentCamp) {
           g.extraYl = 0;
           g.extraZm = 0;
           g.extraMoveStep = 0;
@@ -1750,6 +1938,10 @@ class GameScene extends egret.Sprite {
           if (untilDieMessage["弓腰之乐"]) {
             this.changeExtraToGenerals(chess.camp, "弓", 2 * untilDieMessage["弓腰之乐"]["times"],
               0, 0, 0, {});
+          }
+          if (g.skill.name === "壮士断腕" && g.hasSkilled) {
+            g.tl = 0;
+            this.checkAlive(i, j, false);
           }
           chess.general = g;
         }

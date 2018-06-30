@@ -205,8 +205,24 @@ class StartScene extends egret.Sprite implements ChosenEventHandler, CardTapHand
     }
   }
 
+
+
   public handleCardTapEvent(card: Card) {
-    let gSL = new GeneralSingleLayout(this, card.general, "0");
+
+    let remainPos = [0, 1, 2, 3, 4, 5];
+    for (let i = 0; i < this.generalSingleLayouts.length; i++) {
+      let gsl = this.generalSingleLayouts[i];
+      let pos = gsl.pos;
+      let index = remainPos.indexOf(Number(pos));
+      if (index === -1) {
+        continue;
+      }
+      let left = remainPos.slice(0, index);
+      let right = remainPos.slice(index + 1, remainPos.length);
+      remainPos = left.concat(right);
+    }
+    let posStr = remainPos.length > 0 ? remainPos[0].toString() : "-1";
+    let gSL = new GeneralSingleLayout(this, card.general, posStr);
     gSL.eventHandler = this;
     this.generalSingleLayouts.push(gSL);
     this.generalSortLayout.addLayoutChild(gSL);
@@ -221,8 +237,6 @@ class StartScene extends egret.Sprite implements ChosenEventHandler, CardTapHand
     this.cardPool.cardIndex = index - 1 < 0 ? index : index - 1;
   }
 
-  private 
-
   private setGeneralSortLayout() {
     let generals = this.chosenGenerals;
     this.generalSingleLayouts = [];
@@ -236,8 +250,8 @@ class StartScene extends egret.Sprite implements ChosenEventHandler, CardTapHand
   }
 
   private removeChosenGeneral(g: General) {
-    for(let i = 0; i < this.generalSingleLayouts.length; i++) {
-      if(g.number === this.generalSingleLayouts[i].general.number) {
+    for (let i = 0; i < this.generalSingleLayouts.length; i++) {
+      if (g.number === this.generalSingleLayouts[i].general.number) {
         let left = this.generalSingleLayouts.slice(0, i);
         let right = this.generalSingleLayouts.slice(i + 1, this.generalSingleLayouts.length);
         let giveUp = this.generalSingleLayouts[i];
@@ -245,7 +259,6 @@ class StartScene extends egret.Sprite implements ChosenEventHandler, CardTapHand
         this.generalSingleLayouts = total;
         this.generalSortLayout.removeChild(giveUp);
         this.generalSortLayout.reDrawChildren();
-        console.log(this.generalSingleLayouts);
 
         this.checkCost();
 
@@ -401,7 +414,7 @@ class StartScene extends egret.Sprite implements ChosenEventHandler, CardTapHand
     this.sendChosenData();
   }
 
-  
+
   private sendChosenData() {
     let roomName = this.inputRoom.text;
     let userName = this.inputName.text;

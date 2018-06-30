@@ -27,6 +27,7 @@ class General {
   extraAtkRange: number;
   extraMoveStep: number;
   canPenetrate: boolean;
+  // 直到我方回合结束，这里的信息会一直保留
   extraMessage: any;
   untilDieMessage: any;
   lockedMessage: any;

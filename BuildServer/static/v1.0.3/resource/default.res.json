@@ -1,0 +1,70 @@
+{
+	"groups": [
+		{
+			"keys": "description_json,btn_turnover_png,chessboard_part_cutter_png,egret_icon_png,hurts_area_png,hurts_area_part_png,power_bg_png,turns_bg_png,wall_morale_text_png,bg_jpg,skills_json,generals_json",
+			"name": "preload"
+		}
+	],
+	"resources": [
+		{
+			"name": "description_json",
+			"type": "json",
+			"url": "config/description.json"
+		},
+		{
+			"name": "btn_turnover_png",
+			"type": "image",
+			"url": "assets/btn_turnover.png"
+		},
+		{
+			"name": "chessboard_part_cutter_png",
+			"type": "image",
+			"url": "assets/chessboard_part_cutter.png"
+		},
+		{
+			"name": "egret_icon_png",
+			"type": "image",
+			"url": "assets/egret_icon.png"
+		},
+		{
+			"name": "hurts_area_png",
+			"type": "image",
+			"url": "assets/hurts_area.png"
+		},
+		{
+			"name": "hurts_area_part_png",
+			"type": "image",
+			"url": "assets/hurts_area_part.png"
+		},
+		{
+			"name": "power_bg_png",
+			"type": "image",
+			"url": "assets/power_bg.png"
+		},
+		{
+			"name": "turns_bg_png",
+			"type": "image",
+			"url": "assets/turns_bg.png"
+		},
+		{
+			"name": "wall_morale_text_png",
+			"type": "image",
+			"url": "assets/wall_morale_text.png"
+		},
+		{
+			"name": "bg_jpg",
+			"type": "image",
+			"url": "assets/bg.jpg"
+		},
+		{
+			"name": "skills_json",
+			"type": "json",
+			"url": "json/skills.json"
+		},
+		{
+			"name": "generals_json",
+			"type": "json",
+			"url": "json/generals.json"
+		}
+	]
+}

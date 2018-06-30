@@ -26,7 +26,7 @@ class Card extends egret.Sprite {
     this.height = height;
     this.drawBg();
     this.reDrawGeneralDetail();
-    
+
     this._clickable = true;
     this.touchEnabled = true;
     this.addEventListener("touchBegin", function () {
@@ -40,12 +40,12 @@ class Card extends egret.Sprite {
     }, this);
   }
 
-   private drawBg() {
+  private drawBg() {
     this.graphics.beginFill(0x999999);
     this.graphics.drawRect(0, 0, this.width, this.height);
     this.graphics.endFill();
 
-    
+
   }
 
   private reDrawGeneralDetail() {
@@ -61,23 +61,14 @@ class Card extends egret.Sprite {
     nameText.text = this._general.name;
     this.addChild(nameText);
 
-    let ylzmText = new egret.TextField();
-    ylzmText.x = 150;
-    ylzmText.y = 10;
-    ylzmText.width = 100;
-    ylzmText.height = 100;
-    ylzmText.size = 35;
-    ylzmText.text = this._general.yl + " : " + this._general.zm;
-    this.addChild(ylzmText);
-
-    let costText = new egret.TextField();
-    costText.x = 350;
-    costText.y = 10;
-    costText.width = 100;
-    costText.height = 100;
-    costText.size = 35;
-    costText.text = this._general.cost.toString();
-    this.addChild(costText);
+    let baseDataText = new egret.TextField();
+    baseDataText.x = 140;
+    baseDataText.y = 10;
+    baseDataText.width = 400;
+    baseDataText.height = 100;
+    baseDataText.size = 35;
+    baseDataText.text = "勇 " + this._general.yl + "  智 " + this._general.zm + "  C " + this._general.cost.toString();;
+    this.addChild(baseDataText);
 
     let detailText = new egret.TextField();
     detailText.x = 25;
@@ -85,7 +76,8 @@ class Card extends egret.Sprite {
     detailText.width = 360;
     detailText.height = 400;
     detailText.size = 35;
-    detailText.text = this._general.skill.name + "\n" + this._general.skill.text;
+    detailText.text = this._general.skill.name + "  " + this._general.skill.type + "  Cost:"
+      + this._general.skill.cost + "\n" + this._general.skill.text;
     this.addChild(detailText);
   }
 }
