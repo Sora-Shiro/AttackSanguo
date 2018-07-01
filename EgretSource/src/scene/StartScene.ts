@@ -435,6 +435,7 @@ class StartScene extends egret.Sprite implements ChosenEventHandler, CardTapHand
       "userName": userName,
       "gDetail": gDetail,
     });
+    console.log(data);
     this.socket.writeUTF(data);
   }
 

@@ -11,7 +11,7 @@
 	],
 	"game": [
 		"bin-debug/view/VerticalLayout.js",
-		"bin-debug/scene/StartScene.js",
+		"bin-debug/LoadingUI.js",
 		"bin-debug/Main.js",
 		"bin-debug/Utils.js",
 		"bin-debug/model/game/Constant.js",
@@ -23,7 +23,7 @@
 		"bin-debug/scene/AboutScene.js",
 		"bin-debug/scene/GameScene.js",
 		"bin-debug/scene/LoadingScene.js",
-		"bin-debug/LoadingUI.js",
+		"bin-debug/view/handler/ChosenEventHandler.js",
 		"bin-debug/view/Card.js",
 		"bin-debug/view/CardPool.js",
 		"bin-debug/view/CheckBox.js",
@@ -36,6 +36,6 @@
 		"bin-debug/view/ImgBtn.js",
 		"bin-debug/GameSocket.js",
 		"bin-debug/view/handler/CardTapHandler.js",
-		"bin-debug/view/handler/ChosenEventHandler.js"
+		"bin-debug/scene/StartScene.js"
 	]
 }

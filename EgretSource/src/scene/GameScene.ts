@@ -427,6 +427,7 @@ class GameScene extends egret.Sprite {
       "operatedIndex": this.operatedIndex,
       "targetIndex": this.targetIndex,
     });
+    console.log(data);
     this.socket.writeUTF(data);
   }
 
@@ -1051,10 +1052,10 @@ class GameScene extends egret.Sprite {
 
     this.requestWaitStart();
 
-    let m = this.targetIndex[0];
-    let n = this.targetIndex[1];
-    let i = this.operatedIndex[0];
-    let j = this.operatedIndex[1];
+    let m = this.targetIndex[0] || 0;
+    let n = this.targetIndex[1] || 0;
+    let i = this.operatedIndex[0] || 0;
+    let j = this.operatedIndex[1] || 0;
     let operatedChess: Chess = this.chessBoard.chesses[i][j];
     let operatedG: General = operatedChess.general;
     let targetChess: Chess = this.chessBoard.chesses[m][n];
@@ -1066,17 +1067,26 @@ class GameScene extends egret.Sprite {
       switch (skill.name) {
         case "落石":
           this.showExtraSkillMenu("落石");
+          this.requestWaitEnd();
           return;
         case "火烧赤壁":
           this.showExtraSkillMenu("火烧赤壁");
+          this.requestWaitEnd();
+          return;
+        case "阴平奇袭":
+          this.operateYPQXSkill();
+          this.requestWaitEnd();
           return;
         case "发明":
           this.colorFriendSkillableStuff(false);
+          this.requestWaitEnd();
           return;
         case "黄天当立":
           this.colorNormalSkillableChess(2, i, j);
+          this.requestWaitEnd();
           return;
       }
+      
     }
 
     let data = JSON.stringify({
@@ -1178,8 +1188,6 @@ class GameScene extends egret.Sprite {
         this.changeExtraToGenerals(-operatedCamp, "all", 0, 0, 0, 0, { "addHurtTurns": 1 });
         break;
       case "阴平奇袭":
-        this.operateYPQXSkill();
-        operatedG.skill.onceUsed = true;
         break;
       case "三分归晋":
         this.operateGameOverStuff(operatedCamp);
@@ -1291,17 +1299,21 @@ class GameScene extends egret.Sprite {
     }
   }
 
-  // 偷渡阴平 处理
+  // 阴平奇袭 处理
   private operateYPQXSkill() {
     let a = this.operatedIndex[0];
     let b = this.operatedIndex[1];
     let operatedChess: Chess = this.chessBoard.chesses[a][b];
     let chesses = this.chessBoard.chesses;
+    let operatedGeneral = operatedChess.general;
+    operatedGeneral.hasSkilled = true;
+    operatedGeneral.skill.onceUsed = true;
+    operatedChess.general = operatedGeneral;
     let targetCamp = -chesses[a][b].camp;
     let i = targetCamp === 1 ? 5 : 0;
     for (let j = 0; j < 6; j++) {
       if (chesses[i][j].camp === 0) {
-        chesses[i][j].status = "moveable";
+        chesses[i][j].status = "moveable_confirm";
       }
     }
   }
